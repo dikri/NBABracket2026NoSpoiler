@@ -368,7 +368,7 @@ var PLAYIN_DEF={west:{g78:{id:'pi_w78',t:'POR',b:'PHX'},g910:{id:'pi_w910',t:'LA
 var MATCHUP_IDS={west:{r1:['w1','w2','w3','w4'],r2:['ws1','ws2'],cf:['wcf']},east:{r1:['e1','e2','e3','e4'],r2:['es1','es2'],cf:['ecf']},finals:['fin']};
 var R1_SEEDS={west:[{id:'w1',top:'OKC',bot:null},{id:'w2',top:'SAS',bot:null},{id:'w3',top:'DEN',bot:'MIN'},{id:'w4',top:'LAL',bot:'HOU'}],east:[{id:'e1',top:'DET',bot:null},{id:'e2',top:'BOS',bot:null},{id:'e3',top:'NYK',bot:'ATL'},{id:'e4',top:'CLE',bot:'TOR'}]};
 var FEED={ws1:['w1','w2'],ws2:['w3','w4'],es1:['e1','e2'],es2:['e3','e4'],wcf:['ws1','ws2'],ecf:['es1','es2'],fin:['wcf','ecf']};
-var state={},SAVE_KEY='nba2026v4',currentTab='playin',lastStarKey='';
+var state={},SAVE_KEY='nba2026v5',currentTab='playin',lastStarKey='';
 
 function allIds(){var a=[];['west','east'].forEach(function(c){var p=PLAYIN_DEF[c];a.push(p.g78.id,p.g910.id,p.gF.id);MATCHUP_IDS[c].r1.forEach(function(x){a.push(x)});MATCHUP_IDS[c].r2.forEach(function(x){a.push(x)});MATCHUP_IDS[c].cf.forEach(function(x){a.push(x)})});a.push('fin');return a}
 function freshState(){var s={};allIds().forEach(function(id){s[id]={t:'',b:'',ts:0,bs:0}});['west','east'].forEach(function(c){var p=PLAYIN_DEF[c];s[p.g78.id]={t:p.g78.t,b:p.g78.b,ts:0,bs:0};s[p.g910.id]={t:p.g910.t,b:p.g910.b,ts:0,bs:0};s[p.gF.id]={t:'',b:'',ts:0,bs:0};R1_SEEDS[c].forEach(function(m){s[m.id]={t:m.top||'',b:m.bot||'',ts:0,bs:0}})});return s}
