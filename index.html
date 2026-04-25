@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="NBA 2026">
+<meta name="theme-color" content="#0a0e1a">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' rx='30' fill='%230a0e1a'/%3E%3Ctext x='90' y='120' text-anchor='middle' font-size='100'%3E🏀%3C/text%3E%3C/svg%3E">
+<title>🏀 NBA Playoffs 2026</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;600;700;900&display=swap');
+:root{--nba-blue:#1d428a;--nba-red:#c8102e;--nba-gold:#fdb927;--bg-dark:#0a0e1a;--bg-card:#141a2e;--bg-card-hover:#1c2440;--text-primary:#fff;--text-secondary:#8892b0;--border-color:#2a3456;--accent-glow:rgba(253,185,39,0.3)}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',sans-serif;background:var(--bg-dark);color:var(--text-primary);min-height:100vh;min-height:100dvh;overflow-x:auto;padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom)}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse at 20% 50%,rgba(29,66,138,0.15),transparent 50%),radial-gradient(ellipse at 80% 50%,rgba(200,16,46,0.1),transparent 50%),radial-gradient(ellipse at 50% 0%,rgba(253,185,39,0.08),transparent 40%);pointer-events:none;z-index:0}
+
+/* === TOP NAV (app pages) === */
+.app-nav{display:flex;justify-content:center;gap:8px;padding:10px 16px 6px;position:relative;z-index:10;flex-wrap:wrap}
+.app-nav-btn{font-family:'Inter',sans-serif;font-size:.75rem;font-weight:700;padding:7px 16px;border:1px solid var(--border-color);border-radius:20px;background:var(--bg-card);color:var(--text-secondary);cursor:pointer;transition:all .2s;letter-spacing:1px}
+.app-nav-btn:hover,.app-nav-btn.active{background:var(--nba-gold);color:#1a1a1a;border-color:var(--nba-gold)}
+
+/* === APP PAGES === */
+.app-page{display:none;position:relative;z-index:1}
+.app-page.active{display:block}
+
+/* === BRACKET PAGE (reuse all existing styles) === */
+.conf-bg{position:fixed;inset:0;opacity:0;transition:opacity .5s;pointer-events:none;z-index:0}
+.conf-bg.active{opacity:1}
+#bg-west{background:linear-gradient(135deg,rgba(0,125,195,0.12),rgba(10,14,26,0.95) 30%,rgba(10,14,26,0.9) 50%,rgba(10,14,26,0.95) 70%,rgba(206,17,65,0.08))}
+#bg-east{background:linear-gradient(135deg,rgba(200,16,46,0.1),rgba(10,14,26,0.95) 30%,rgba(10,14,26,0.9) 50%,rgba(10,14,26,0.95) 70%,rgba(29,66,138,0.12))}
+#bg-playin{background:linear-gradient(135deg,rgba(253,185,39,0.08),rgba(10,14,26,0.95) 30%,rgba(10,14,26,0.92) 50%,rgba(10,14,26,0.95) 70%,rgba(253,185,39,0.06))}
+#bg-finals{background:radial-gradient(ellipse at 50% 30%,rgba(253,185,39,0.15),rgba(10,14,26,0.95) 50%,rgba(10,14,26,1))}
+.star-player{position:fixed;z-index:0;opacity:0;transition:opacity .5s;pointer-events:none;filter:grayscale(20%) brightness(0.35) contrast(1.2)}
+.star-player.active{opacity:1}
+.star-player.left-star{left:-30px;bottom:0;height:65vh;max-height:550px}
+.star-player.right-star{right:-30px;bottom:0;height:60vh;max-height:500px}
+.winner-img{width:52px;height:52px;border-radius:50%;object-fit:cover;object-position:top;border:2px solid var(--nba-gold);box-shadow:0 0 12px rgba(253,185,39,0.4);filter:contrast(1.3) saturate(1.2);flex-shrink:0;background:#222}
+.winner-img-slot{width:52px;height:52px;flex-shrink:0}
+.matchup-wrap{display:flex;align-items:center;gap:10px}
+.matchup-wrap.img-left{flex-direction:row}
+.matchup-wrap.img-top{flex-direction:column;align-items:center}
+.matchup-wrap.img-top .winner-img,.matchup-wrap.img-top .winner-img-slot{width:44px;height:44px}
+.header{text-align:center;padding:12px 20px 4px;position:relative;z-index:1}
+.header h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(1.8rem,5vw,3rem);letter-spacing:4px;background:linear-gradient(135deg,var(--nba-gold),#fff,var(--nba-gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:2px}
+.header .subtitle{font-size:.8rem;color:var(--nba-gold);letter-spacing:3px;text-transform:uppercase;font-weight:600}
+.header .nba-logo{width:40px;margin-bottom:4px;filter:drop-shadow(0 0 10px rgba(253,185,39,0.5))}
+.controls-bar{display:flex;justify-content:center;gap:10px;padding:6px 16px 10px;position:relative;z-index:1;flex-wrap:wrap}
+.controls-bar button{font-family:'Inter',sans-serif;font-size:.75rem;font-weight:600;padding:6px 14px;border:1px solid var(--border-color);border-radius:8px;background:var(--bg-card);color:var(--text-secondary);cursor:pointer;transition:all .2s}
+.controls-bar button:hover{background:var(--bg-card-hover);color:var(--text-primary);border-color:var(--nba-gold)}
+.tab-bar{display:flex;justify-content:center;gap:0;padding:0 16px 10px;position:relative;z-index:1;flex-wrap:wrap}
+.tab-btn{font-family:'Bebas Neue',sans-serif;font-size:1rem;letter-spacing:2px;padding:8px 16px;border:2px solid var(--border-color);background:var(--bg-card);color:var(--text-secondary);cursor:pointer;transition:all .3s}
+.tab-btn:first-child{border-radius:10px 0 0 10px}
+.tab-btn:last-child{border-radius:0 10px 10px 0}
+.tab-btn.active-playin,.tab-btn.active-finals{background:linear-gradient(135deg,#b8860b,var(--nba-gold));color:#1a1a1a;border-color:var(--nba-gold)}
+.tab-btn.active-west{background:linear-gradient(135deg,var(--nba-blue),#2a5cc7);color:#fff;border-color:var(--nba-blue)}
+.tab-btn.active-east{background:linear-gradient(135deg,var(--nba-red),#e8304a);color:#fff;border-color:var(--nba-red)}
+.bracket-container{position:relative;z-index:1;padding:8px 16px 30px;overflow-x:auto;display:none}
+.bracket-container.active{display:block}
+.bracket{display:flex;align-items:center;justify-content:center;gap:24px;min-width:fit-content;padding:10px}
+.round{display:flex;flex-direction:column;justify-content:center;min-width:240px}
+.round-title{font-family:'Bebas Neue',sans-serif;font-size:1rem;letter-spacing:2px;color:var(--text-secondary);text-align:center;margin-bottom:8px}
+.round-r1 .matchup-wrap{margin-bottom:12px}.round-r1 .matchup-wrap:last-child{margin-bottom:0}
+.round-r2 .matchup-wrap{margin-bottom:40px}.round-r2 .matchup-wrap:last-child{margin-bottom:0}
+.matchup{background:var(--bg-card);border:1px solid var(--border-color);border-radius:12px;overflow:hidden;transition:all .3s;box-shadow:0 4px 15px rgba(0,0,0,0.3);width:250px;min-width:250px;max-width:250px}
+.matchup:hover{border-color:var(--nba-gold);box-shadow:0 4px 20px var(--accent-glow);transform:translateY(-2px)}
+.matchup-header{font-size:.6rem;color:var(--text-secondary);text-align:center;padding:5px 8px 3px;text-transform:uppercase;letter-spacing:1px;border-bottom:1px solid var(--border-color);background:rgba(255,255,255,0.02)}
+.team-row{display:flex;align-items:center;padding:7px 10px;gap:6px;border-bottom:1px solid rgba(255,255,255,0.05);transition:background .2s}
+.team-row:last-child{border-bottom:none}
+.team-row.winner{background:rgba(0,200,83,0.08)}
+.team-row.eliminated{opacity:.4}
+.team-seed{font-size:.65rem;color:var(--text-secondary);min-width:16px;text-align:center;font-weight:700}
+.team-logo{width:24px;height:24px;object-fit:contain;border-radius:4px;flex-shrink:0;background:rgba(255,255,255,0.03)}
+.team-name-select{flex:1;min-width:0}
+.team-name-select select{width:100%;background:transparent;border:1px solid transparent;color:var(--text-primary);font-family:'Inter',sans-serif;font-size:.8rem;font-weight:600;padding:3px 2px;cursor:pointer;border-radius:4px;appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%238892b0'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 4px center;padding-right:18px}
+.team-name-select select:hover{border-color:var(--border-color)}
+.team-name-select select:focus{outline:none;border-color:var(--nba-gold)}
+.team-name-select select option{background:var(--bg-card);color:var(--text-primary)}
+.team-name-select select:disabled{cursor:default;opacity:.9;background-image:none}
+.score-controls{display:flex;align-items:center;gap:3px;flex-shrink:0}
+.score-btn{width:22px;height:22px;border-radius:6px;border:1px solid var(--border-color);background:rgba(255,255,255,0.05);color:var(--text-secondary);font-size:.85rem;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;line-height:1;padding:0}
+.score-btn:hover{background:var(--nba-gold);color:#1a1a1a;border-color:var(--nba-gold)}
+.score-display{font-size:1rem;font-weight:700;min-width:18px;text-align:center;color:var(--nba-gold)}
+.standings-section{max-width:500px;margin:30px auto 0;position:relative;z-index:1}
+.standings-title{font-family:'Bebas Neue',sans-serif;font-size:1.3rem;letter-spacing:2px;text-align:center;margin-bottom:10px;color:var(--nba-gold)}
+.standings-table{width:100%;border-collapse:collapse;font-size:.78rem;background:var(--bg-card);border-radius:10px;overflow:hidden;border:1px solid var(--border-color)}
+.standings-table th{background:rgba(255,255,255,0.05);padding:7px 10px;text-align:left;color:var(--text-secondary);font-weight:600;text-transform:uppercase;font-size:.68rem;letter-spacing:1px}
+.standings-table td{padding:5px 10px;border-top:1px solid rgba(255,255,255,0.04)}
+.standings-table tr.playoff-team td{color:var(--text-primary)}
+.standings-table tr.playin-team td{color:var(--text-secondary);font-style:italic}
+.standings-table .seed-col{width:28px;text-align:center;font-weight:700;color:var(--nba-gold)}
+.standings-table .team-col{font-weight:600}
+.standings-table .record-col{text-align:center;color:var(--text-secondary)}
+.standings-table .logo-col{width:26px}
+.standings-table .logo-col img{width:20px;height:20px;object-fit:contain;vertical-align:middle}
+.standings-divider td{padding:2px 10px;font-size:.63rem;color:var(--nba-gold);text-transform:uppercase;letter-spacing:1px;border-top:2px dashed rgba(253,185,39,0.3);background:rgba(253,185,39,0.03)}
+.playin-section{max-width:700px;margin:0 auto;padding:10px}
+.playin-conf{margin-bottom:30px}
+.playin-conf-title{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;letter-spacing:3px;text-align:center;margin-bottom:15px}
+.playin-conf-title.west-title{color:#4a90d9}
+.playin-conf-title.east-title{color:#e8304a}
+.playin-flow{display:flex;flex-direction:column;gap:12px;align-items:center;max-width:550px;margin:0 auto}
+.playin-step-label{font-size:.7rem;color:var(--text-secondary);text-transform:uppercase;letter-spacing:1px;font-weight:600;text-align:center;margin-top:8px}
+.playin-arrow-down{color:var(--nba-gold);font-size:1.2rem;text-align:center}
+.finals-container{text-align:center;padding:20px;display:flex;flex-direction:column;align-items:center}
+.finals-matchup{max-width:400px;margin:0 auto}
+.champion-banner{margin-top:30px;padding:20px;text-align:center}
+.champion-banner h2{font-family:'Bebas Neue',sans-serif;font-size:1.5rem;letter-spacing:3px;color:var(--nba-gold);margin-bottom:10px}
+.champion-name{font-family:'Bebas Neue',sans-serif;font-size:2.5rem;letter-spacing:2px;background:linear-gradient(135deg,var(--nba-gold),#fff);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.trophy{font-size:3rem;margin:10px 0}
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:100;align-items:center;justify-content:center}
+.modal-overlay.active{display:flex}
+.modal{background:var(--bg-card);border:1px solid var(--border-color);border-radius:16px;padding:30px;max-width:500px;width:90%;max-height:80vh;overflow-y:auto}
+.modal h3{font-family:'Bebas Neue',sans-serif;font-size:1.5rem;letter-spacing:2px;margin-bottom:15px;color:var(--nba-gold)}
+.modal textarea{width:100%;height:120px;background:var(--bg-dark);border:1px solid var(--border-color);border-radius:8px;color:var(--text-primary);font-family:monospace;font-size:.8rem;padding:10px;resize:vertical}
+.modal textarea:focus{outline:none;border-color:var(--nba-gold)}
+.modal-buttons{display:flex;gap:10px;margin-top:15px;justify-content:flex-end}
+.modal-buttons button{font-family:'Inter',sans-serif;font-weight:600;padding:8px 20px;border-radius:8px;border:1px solid var(--border-color);cursor:pointer;font-size:.85rem;transition:all .2s}
+.btn-primary{background:var(--nba-gold);color:#1a1a1a;border-color:var(--nba-gold)!important}
+.btn-secondary{background:var(--bg-dark);color:var(--text-secondary)}
+.status-msg{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--bg-card);border:1px solid var(--nba-gold);color:var(--nba-gold);padding:10px 24px;border-radius:10px;font-size:.85rem;font-weight:600;z-index:200;opacity:0;transition:opacity .3s;pointer-events:none}
+.status-msg.show{opacity:1}
+
+/* === ANLEITUNG PAGE === */
+.guide{max-width:700px;margin:0 auto;padding:20px 20px 50px;position:relative;z-index:1;line-height:1.7}
+.guide h2{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;letter-spacing:2px;color:var(--nba-gold);margin:28px 0 10px;padding-bottom:6px;border-bottom:1px solid rgba(253,185,39,0.2)}
+.guide h3{font-size:.9rem;font-weight:700;color:#fff;margin:16px 0 6px}
+.guide p{margin:6px 0;color:#b0b8d0;font-size:.85rem}
+.guide ul,.guide ol{margin:6px 0 6px 18px;color:#b0b8d0;font-size:.85rem}
+.guide li{margin:3px 0}
+.guide li strong{color:#fff}
+.guide code{background:rgba(253,185,39,0.1);color:var(--nba-gold);padding:2px 5px;border-radius:4px;font-size:.8rem}
+.guide table{width:100%;border-collapse:collapse;margin:10px 0;font-size:.8rem}
+.guide th{background:rgba(253,185,39,0.08);color:var(--nba-gold);padding:8px 12px;text-align:left;font-weight:700;font-size:.7rem;text-transform:uppercase;letter-spacing:1px}
+.guide td{padding:8px 12px;border-top:1px solid rgba(255,255,255,0.05);color:#b0b8d0}
+.guide .card{background:var(--bg-card);border:1px solid var(--border-color);border-radius:10px;padding:14px 16px;margin:10px 0}
+.guide .card p{margin:3px 0}
+.guide .tip{background:rgba(253,185,39,0.06);border-left:3px solid var(--nba-gold);padding:10px 14px;border-radius:0 8px 8px 0;margin:12px 0;font-size:.82rem;color:#c0c8e0}
+
+/* === TEASER PAGE === */
+.teaser-wrap{position:relative;width:100%;height:calc(100vh - 60px);height:calc(100dvh - 60px);overflow:hidden;display:flex;align-items:center;justify-content:center}
+.scene{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;opacity:0;transition:opacity .6s;pointer-events:none}
+.scene.active{opacity:1}
+.s1 h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(2rem,6vw,4rem);letter-spacing:6px;background:linear-gradient(135deg,var(--nba-gold),#fff,var(--nba-gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;text-align:center}
+.s1 .sub{color:var(--nba-gold);font-size:1rem;letter-spacing:4px;margin-top:8px;font-weight:600}
+.s2 .feature{font-family:'Bebas Neue',sans-serif;font-size:clamp(1.5rem,4vw,2.8rem);letter-spacing:3px;text-align:center;opacity:0;transform:translateY(30px)}
+.s2 .feature.show{animation:slideUp .5s ease forwards}
+.s2 .feature .emoji{font-size:3rem;display:block;margin-bottom:8px}
+.s2 .feature .desc{font-family:'Inter',sans-serif;font-size:.9rem;color:#8892b0;letter-spacing:1px;margin-top:6px;font-weight:400}
+.s4 .sound-text{font-family:'Bebas Neue',sans-serif;font-size:clamp(1.5rem,4vw,3rem);letter-spacing:4px;text-align:center}
+.s4 .waves{display:flex;gap:4px;justify-content:center;margin-top:20px;height:60px;align-items:flex-end}
+.s4 .wave-bar{width:6px;background:var(--nba-gold);border-radius:3px;animation:waveAnim .6s ease infinite alternate}
+.s4 .wave-bar:nth-child(2){animation-delay:.1s}.s4 .wave-bar:nth-child(3){animation-delay:.2s}
+.s4 .wave-bar:nth-child(4){animation-delay:.3s}.s4 .wave-bar:nth-child(5){animation-delay:.4s}
+.s4 .wave-bar:nth-child(6){animation-delay:.15s}.s4 .wave-bar:nth-child(7){animation-delay:.25s}
+.s4 .wave-bar:nth-child(8){animation-delay:.35s}.s4 .wave-bar:nth-child(9){animation-delay:.05s}
+.s4 .sound-desc{color:#8892b0;font-size:.9rem;margin-top:14px;text-align:center}
+.s6 h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(2rem,5vw,3.5rem);letter-spacing:5px;background:linear-gradient(135deg,var(--nba-gold),#fff,var(--nba-gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;text-align:center}
+.s6 .cta{font-size:1rem;color:var(--nba-gold);margin-top:14px;letter-spacing:3px;font-weight:600}
+.s6 .by{color:#8892b0;font-size:.75rem;margin-top:16px;letter-spacing:2px}
+.teaser-play-btn{padding:12px 30px;border-radius:30px;border:2px solid var(--nba-gold);background:transparent;color:var(--nba-gold);font-family:'Bebas Neue',sans-serif;font-size:1.3rem;letter-spacing:3px;cursor:pointer;transition:all .3s;margin-bottom:20px;z-index:5;position:relative}
+.teaser-play-btn:hover{background:var(--nba-gold);color:#1a1a1a}
+.teaser-progress{position:absolute;bottom:0;left:0;height:3px;background:var(--nba-gold);z-index:5;transition:width .1s linear}
+
+@keyframes slideUp{to{opacity:1;transform:translateY(0)}}
+@keyframes waveAnim{from{height:10px}to{height:55px}}
+
+/* === RESPONSIVE === */
+@media(max-width:768px){
+  .bracket{gap:18px;justify-content:flex-start;padding:10px 5px}
+  .round{min-width:220px}
+  .matchup{width:220px;min-width:220px;max-width:220px}
+  .matchup-wrap{justify-content:center}
+  .winner-img{width:40px;height:40px}.winner-img-slot{width:40px;height:40px}
+  .matchup-wrap.img-top .winner-img,.matchup-wrap.img-top .winner-img-slot{width:36px;height:36px}
+  .controls-bar{gap:6px}.controls-bar button{font-size:.68rem;padding:5px 10px}
+  .star-player.left-star{left:-40px;height:45vh;max-height:350px;opacity:.8}
+  .star-player.right-star{right:-40px;height:40vh;max-height:300px;opacity:.8}
+  .tab-btn{font-size:.85rem;padding:7px 10px;letter-spacing:1px}
+  .team-name-select select{font-size:.72rem}
+  .app-nav-btn{font-size:.68rem;padding:6px 12px}
+}
+</style>
+</head>
+<body>
+<!-- APP NAVIGATION -->
+<div class="app-nav">
+  <button class="app-nav-btn active" onclick="showPage('bracket')">🏀 Bracket</button>
+  <button class="app-nav-btn" onclick="showPage('guide')">📖 Anleitung</button>
+  <button class="app-nav-btn" onclick="showPage('teaser')">🎬 Teaser</button>
+</div>
+
+<!-- ==================== BRACKET PAGE ==================== -->
+<div class="app-page active" id="page-bracket">
+<div class="conf-bg active" id="bg-playin"></div>
+<div class="conf-bg" id="bg-west"></div>
+<div class="conf-bg" id="bg-east"></div>
+<div class="conf-bg" id="bg-finals"></div>
+<div id="star-container"></div>
+<div class="header">
+  <img class="nba-logo" src="https://cdn.nba.com/logos/leagues/logo-nba.svg" alt="NBA" onerror="this.style.display='none'">
+  <h1>NBA Playoffs 2026</h1>
+  <div class="subtitle">#DS4's personal bracket</div>
+</div>
+<div class="controls-bar">
+  <button onclick="exportData()">📤 Export</button>
+  <button onclick="showImportModal()">📥 Import</button>
+  <button onclick="resetAll()">🔄 Reset</button>
+</div>
+<div class="tab-bar">
+  <button class="tab-btn active-playin" id="tab-playin" onclick="showTab('playin')">🎯 Play-In</button>
+  <button class="tab-btn" id="tab-west" onclick="showTab('west')">🌵 Western</button>
+  <button class="tab-btn" id="tab-east" onclick="showTab('east')">🗽 Eastern</button>
+  <button class="tab-btn" id="tab-finals" onclick="showTab('finals')">🏆 Finals</button>
+</div>
+<div class="bracket-container active" id="bracket-playin"></div>
+<div class="bracket-container" id="bracket-west"></div>
+<div class="bracket-container" id="bracket-east"></div>
+<div class="bracket-container" id="bracket-finals"></div>
+<div class="modal-overlay" id="import-modal">
+  <div class="modal">
+    <h3>📥 Daten importieren</h3>
+    <p style="color:var(--text-secondary);font-size:.85rem;margin-bottom:12px">Füge hier deinen Export-Code ein.</p>
+    <textarea id="import-textarea" placeholder="Export-Code hier einfügen..."></textarea>
+    <div class="modal-buttons">
+      <button class="btn-secondary" onclick="closeImportModal()">Abbrechen</button>
+      <button class="btn-primary" onclick="importData()">Importieren</button>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ==================== GUIDE PAGE ==================== -->
+<div class="app-page" id="page-guide">
+<div class="guide">
+  <h2>Was ist das?</h2>
+  <p>Eine interaktive App, mit der du die NBA Playoffs 2026 in deinem eigenen Tempo verfolgen kannst. Du trägst die Ergebnisse selbst ein — keine Spoiler, kein Stress.</p>
+  <h2>Die 4 Tabs</h2>
+  <table><thead><tr><th>Tab</th><th>Was ist drin?</th></tr></thead><tbody>
+    <tr><td>🎯 <strong>Play-In</strong></td><td>Play-In Tournament für West und East. Hier startest du.</td></tr>
+    <tr><td>🌵 <strong>Western</strong></td><td>Playoff-Bracket West (First Round → Semis → Conf. Finals) + Tabelle</td></tr>
+    <tr><td>🗽 <strong>Eastern</strong></td><td>Playoff-Bracket East + Tabelle</td></tr>
+    <tr><td>🏆 <strong>Finals</strong></td><td>Das große Finale — NBA Finals 2026</td></tr>
+  </tbody></table>
+  <h2>So funktioniert's</h2>
+  <h3>Ergebnisse eintragen</h3>
+  <ul>
+    <li><strong>+</strong> Button: Ein Sieg eintragen (+1)</li>
+    <li><strong>−</strong> Button: Verklickt weil fettige Finger? Sieg zurücknehmen (-1)</li>
+    <li>Play-In: Wer zuerst <strong style="color:var(--nba-gold)">1</strong> Sieg hat, gewinnt</li>
+    <li>Playoffs: Wer zuerst <strong style="color:var(--nba-gold)">4</strong> Siege hat, gewinnt (Best of 7)</li>
+  </ul>
+  <h3>Automatisches Weiterrücken</h3>
+  <div class="card">
+    <p>🎯 Play-In Gewinner → 🏀 First Round</p>
+    <p>🏀 First Round → 🏀 Conference Semis</p>
+    <p>🏀 Semis → 🏀 Conference Finals</p>
+    <p>🏀 Conf. Finals → 🏆 NBA Finals</p>
+  </div>
+  <h3>Sounds 🔊</h3>
+  <div class="card">
+    <p><strong>+1</strong> → Schuh-Quietschen, Swish, Bounce, oder Musik-Riff</p>
+    <p><strong>-1</strong> → Brick oder Crowd-Stöhnen</p>
+    <p><strong>Serie gewonnen</strong> → Fanfare, Charge oder Organ-Jingle</p>
+    <p><strong>Championship</strong> → Volle Packung 🏆</p>
+  </div>
+  <h2>Gerätewechsel</h2>
+  <p>Fortschritt wird automatisch im Browser gespeichert. <strong>Pro Gerät ein eigener Stand.</strong></p>
+  <ol>
+    <li><strong>📤 Export</strong> → Code wird kopiert</li>
+    <li>Code aufs andere Gerät bringen (WhatsApp, Notiz, etc.)</li>
+    <li><strong>📥 Import</strong> → Code einfügen → fertig</li>
+  </ol>
+  <p><strong>🔄 Reset</strong> setzt alles zurück (mit Sicherheitsabfrage).</p>
+  <h2>Als App installieren</h2>
+  <div class="tip">📱 <strong>iPhone:</strong> Safari → Teilen-Button → "Zum Home-Bildschirm"<br>
+  💻 <strong>Chrome:</strong> Adressleiste → Installations-Icon klicken</div>
+  <h2>Tipps</h2>
+  <div class="tip">🔊 Am besten mit Ton benutzen — die Sounds machen Spaß!</div>
+  <ul>
+    <li>Spielerbilder unten zeigen Stars von Teams die noch im Rennen sind</li>
+    <li>Kleine runde Bilder neben Serien = Star des Gewinnerteams</li>
+    <li>Auf dem Handy horizontal scrollen für die Bracket-Ansicht</li>
+  </ul>
+  <p style="text-align:center;margin-top:30px;color:#555;font-size:.75rem">by Dirk &amp; Kiro 🏀</p>
+</div>
+</div>
+
+<!-- ==================== TEASER PAGE ==================== -->
+<div class="app-page" id="page-teaser">
+<div class="teaser-wrap" id="teaserWrap">
+  <button class="teaser-play-btn" id="teaserPlayBtn" onclick="startTeaser()">▶ PLAY TEASER</button>
+  <div class="teaser-progress" id="teaserProgress"></div>
+  <div class="scene s1" id="ts1"><h1>🏀 NBA PLAYOFFS 2026</h1><div class="sub">#DS4'S PERSONAL BRACKET</div></div>
+  <div class="scene s2" id="ts2"><div class="feature" id="tf1"><span class="emoji">🏀</span>DEIN TEMPO. DEINE PLAYOFFS.<div class="desc">Keine Spoiler — du trägst alles selbst ein</div></div></div>
+  <div class="scene s2" id="ts3"><div class="feature" id="tf2"><span class="emoji">📊</span>PLAY-IN → FIRST ROUND → FINALS<div class="desc">Automatisches Weiterrücken der Gewinner</div></div></div>
+  <div class="scene s4" id="ts4"><div class="sound-text">🔊 MIT SOUND</div><div class="waves"><div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div></div><div class="sound-desc">Swish • Sneaker-Quietschen • Arena-Fanfaren • Musik-Riffs</div></div>
+  <div class="scene s6" id="ts5"><h1>🏀 GAME TIME 🏀</h1><div class="cta">Tippe auf "Bracket" um loszulegen</div><div class="by">by Dirk &amp; Kiro</div></div>
+</div>
+</div>
+
+<div class="status-msg" id="status-msg"></div>
+<script>
+// === PAGE NAVIGATION ===
+function showPage(p){
+  document.querySelectorAll('.app-page').forEach(function(el){el.classList.remove('active')});
+  document.querySelectorAll('.app-nav-btn').forEach(function(el){el.classList.remove('active')});
+  document.getElementById('page-'+p).classList.add('active');
+  var btns=document.querySelectorAll('.app-nav-btn');
+  var map={bracket:0,guide:1,teaser:2};
+  if(map[p]!==undefined)btns[map[p]].classList.add('active');
+  // Hide bracket backgrounds on non-bracket pages
+  document.querySelectorAll('.conf-bg').forEach(function(el){el.classList.remove('active')});
+  document.querySelectorAll('.star-player').forEach(function(el){el.classList.remove('active')});
+  if(p==='bracket'){
+    document.getElementById('bg-'+currentTab).classList.add('active');
+    lastStarKey='';updateStars();
+  }
+}
+
+// === TEASER ===
+var tScenes=[{id:'ts1',dur:3500},{id:'ts2',dur:3000,on:function(){setTimeout(function(){document.getElementById('tf1').classList.add('show')},200)}},{id:'ts3',dur:3000,on:function(){setTimeout(function(){document.getElementById('tf2').classList.add('show')},200)}},{id:'ts4',dur:3500},{id:'ts5',dur:3500}];
+var tTotal=0;tScenes.forEach(function(s){tTotal+=s.dur});
+var tRunning=false;
+function startTeaser(){
+  if(tRunning)return;tRunning=true;
+  document.getElementById('teaserPlayBtn').style.display='none';
+  // Reset features
+  document.getElementById('tf1').classList.remove('show');
+  document.getElementById('tf2').classList.remove('show');
+  var start=Date.now(),idx=-1;
+  function show(i){tScenes.forEach(function(s){document.getElementById(s.id).classList.remove('active')});document.getElementById(tScenes[i].id).classList.add('active');if(tScenes[i].on)tScenes[i].on()}
+  var timer=setInterval(function(){
+    var now=Date.now()-start;
+    document.getElementById('teaserProgress').style.width=(now/tTotal*100)+'%';
+    var acc=0;
+    for(var i=0;i<tScenes.length;i++){acc+=tScenes[i].dur;if(now<acc){if(i!==idx){idx=i;show(i)}break}}
+    if(now>=tTotal){clearInterval(timer);tRunning=false;document.getElementById('teaserPlayBtn').style.display='';document.getElementById('teaserPlayBtn').textContent='↻ NOCHMAL'}
+  },50);
+}
+// === TEAM DATA ===
+var TEAMS={
+OKC:{name:'Thunder',city:'Oklahoma City',abbr:'OKC',seed:1,conf:'west',record:'64-18',logo:'https://cdn.nba.com/logos/nba/1610612760/global/L/logo.svg',star:'1628983'},
+SAS:{name:'Spurs',city:'San Antonio',abbr:'SAS',seed:2,conf:'west',record:'62-20',logo:'https://cdn.nba.com/logos/nba/1610612759/global/L/logo.svg',star:'1641705'},
+DEN:{name:'Nuggets',city:'Denver',abbr:'DEN',seed:3,conf:'west',record:'54-28',logo:'https://cdn.nba.com/logos/nba/1610612743/global/L/logo.svg',star:'203999'},
+LAL:{name:'Lakers',city:'Los Angeles',abbr:'LAL',seed:4,conf:'west',record:'53-29',logo:'https://cdn.nba.com/logos/nba/1610612747/global/L/logo.svg',star:'1629029'},
+HOU:{name:'Rockets',city:'Houston',abbr:'HOU',seed:5,conf:'west',record:'52-30',logo:'https://cdn.nba.com/logos/nba/1610612745/global/L/logo.svg',star:'201142'},
+MIN:{name:'Timberwolves',city:'Minnesota',abbr:'MIN',seed:6,conf:'west',record:'49-33',logo:'https://cdn.nba.com/logos/nba/1610612750/global/L/logo.svg',star:'1630162'},
+POR:{name:'Trail Blazers',city:'Portland',abbr:'POR',seed:7,conf:'west',record:'42-40',logo:'https://cdn.nba.com/logos/nba/1610612757/global/L/logo.svg',star:'1630703'},
+PHX:{name:'Suns',city:'Phoenix',abbr:'PHX',seed:8,conf:'west',record:'45-37',logo:'https://cdn.nba.com/logos/nba/1610612756/global/L/logo.svg',star:'1626164'},
+GSW:{name:'Warriors',city:'Golden State',abbr:'GSW',seed:10,conf:'west',record:'37-45',logo:'https://cdn.nba.com/logos/nba/1610612744/global/L/logo.svg',star:'201939'},
+LAC:{name:'Clippers',city:'LA Clippers',abbr:'LAC',seed:9,conf:'west',record:'41-41',logo:'https://cdn.nba.com/logos/nba/1610612746/global/L/logo.svg',star:'202695'},
+DET:{name:'Pistons',city:'Detroit',abbr:'DET',seed:1,conf:'east',record:'60-22',logo:'https://cdn.nba.com/logos/nba/1610612765/global/L/logo.svg',star:'1630595'},
+BOS:{name:'Celtics',city:'Boston',abbr:'BOS',seed:2,conf:'east',record:'56-26',logo:'https://cdn.nba.com/logos/nba/1610612738/global/L/logo.svg',star:'1628369'},
+NYK:{name:'Knicks',city:'New York',abbr:'NYK',seed:3,conf:'east',record:'53-29',logo:'https://cdn.nba.com/logos/nba/1610612752/global/L/logo.svg',star:'1628365'},
+CLE:{name:'Cavaliers',city:'Cleveland',abbr:'CLE',seed:4,conf:'east',record:'52-30',logo:'https://cdn.nba.com/logos/nba/1610612739/global/L/logo.svg',star:'1628378'},
+TOR:{name:'Raptors',city:'Toronto',abbr:'TOR',seed:5,conf:'east',record:'46-36',logo:'https://cdn.nba.com/logos/nba/1610612761/global/L/logo.svg',star:'1630169'},
+ATL:{name:'Hawks',city:'Atlanta',abbr:'ATL',seed:6,conf:'east',record:'46-36',logo:'https://cdn.nba.com/logos/nba/1610612737/global/L/logo.svg',star:'1629027'},
+PHI:{name:'76ers',city:'Philadelphia',abbr:'PHI',seed:7,conf:'east',record:'45-37',logo:'https://cdn.nba.com/logos/nba/1610612755/global/L/logo.svg',star:'203954'},
+ORL:{name:'Magic',city:'Orlando',abbr:'ORL',seed:8,conf:'east',record:'45-37',logo:'https://cdn.nba.com/logos/nba/1610612753/global/L/logo.svg',star:'1631094'},
+CHA:{name:'Hornets',city:'Charlotte',abbr:'CHA',seed:9,conf:'east',record:'43-39',logo:'https://cdn.nba.com/logos/nba/1610612766/global/L/logo.svg',star:'1630163'},
+MIA:{name:'Heat',city:'Miami',abbr:'MIA',seed:10,conf:'east',record:'41-41',logo:'https://cdn.nba.com/logos/nba/1610612748/global/L/logo.svg',star:'1628389'}};
+var FALLBACK='data:image/svg+xml,'+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40"><circle cx="20" cy="20" r="18" fill="#333"/><text x="20" y="26" text-anchor="middle" fill="#888" font-size="14">🏀</text></svg>');
+var STANDINGS={west:[{a:'OKC',s:1},{a:'SAS',s:2},{a:'DEN',s:3},{a:'LAL',s:4},{a:'HOU',s:5},{a:'MIN',s:6},'---',{a:'POR',s:7},{a:'PHX',s:8},{a:'LAC',s:9},{a:'GSW',s:10}],east:[{a:'DET',s:1},{a:'BOS',s:2},{a:'NYK',s:3},{a:'CLE',s:4},{a:'TOR',s:5},{a:'ATL',s:6},'---',{a:'PHI',s:7},{a:'ORL',s:8},{a:'CHA',s:9},{a:'MIA',s:10}]};
+var PLAYIN_DEF={west:{g78:{id:'pi_w78',t:'POR',b:'PHX'},g910:{id:'pi_w910',t:'LAC',b:'GSW'},gF:{id:'pi_wF'}},east:{g78:{id:'pi_e78',t:'PHI',b:'ORL'},g910:{id:'pi_e910',t:'CHA',b:'MIA'},gF:{id:'pi_eF'}}};
+var MATCHUP_IDS={west:{r1:['w1','w2','w3','w4'],r2:['ws1','ws2'],cf:['wcf']},east:{r1:['e1','e2','e3','e4'],r2:['es1','es2'],cf:['ecf']},finals:['fin']};
+var R1_SEEDS={west:[{id:'w1',top:'OKC',bot:null},{id:'w2',top:'SAS',bot:null},{id:'w3',top:'DEN',bot:'MIN'},{id:'w4',top:'LAL',bot:'HOU'}],east:[{id:'e1',top:'DET',bot:null},{id:'e2',top:'BOS',bot:null},{id:'e3',top:'NYK',bot:'ATL'},{id:'e4',top:'CLE',bot:'TOR'}]};
+var FEED={ws1:['w1','w2'],ws2:['w3','w4'],es1:['e1','e2'],es2:['e3','e4'],wcf:['ws1','ws2'],ecf:['es1','es2'],fin:['wcf','ecf']};
+var state={},SAVE_KEY='nba2026v4',currentTab='playin',lastStarKey='';
+
+function allIds(){var a=[];['west','east'].forEach(function(c){var p=PLAYIN_DEF[c];a.push(p.g78.id,p.g910.id,p.gF.id);MATCHUP_IDS[c].r1.forEach(function(x){a.push(x)});MATCHUP_IDS[c].r2.forEach(function(x){a.push(x)});MATCHUP_IDS[c].cf.forEach(function(x){a.push(x)})});a.push('fin');return a}
+function freshState(){var s={};allIds().forEach(function(id){s[id]={t:'',b:'',ts:0,bs:0}});['west','east'].forEach(function(c){var p=PLAYIN_DEF[c];s[p.g78.id]={t:p.g78.t,b:p.g78.b,ts:0,bs:0};s[p.g910.id]={t:p.g910.t,b:p.g910.b,ts:0,bs:0};s[p.gF.id]={t:'',b:'',ts:0,bs:0};R1_SEEDS[c].forEach(function(m){s[m.id]={t:m.top||'',b:m.bot||'',ts:0,bs:0}})});return s}
+function save(){try{localStorage.setItem(SAVE_KEY,JSON.stringify(state))}catch(e){}}
+function load(){try{var r=localStorage.getItem(SAVE_KEY);if(r){var p=JSON.parse(r),f=freshState();for(var k in f){if(p[k])f[k]=p[k]}return f}}catch(e){}return null}
+function T(a){return(a&&TEAMS[a])?TEAMS[a]:{name:'TBD',city:'',abbr:'',seed:'?',logo:'',record:'',star:''}}
+function W(id,at){var s=state[id];if(!s)return'';if(s.ts>=at&&s.t)return s.t;if(s.bs>=at&&s.b)return s.b;return''}
+function L(id,at){var s=state[id];if(!s)return'';if(s.ts>=at&&s.t)return s.b;if(s.bs>=at&&s.b)return s.t;return''}
+function cTeams(c){var a=[];for(var k in TEAMS)if(TEAMS[k].conf===c)a.push(TEAMS[k]);a.sort(function(x,y){return x.seed-y.seed});return a}
+function opts(teams,sel){var h='<option value="">— TBD —</option>';teams.forEach(function(t){h+='<option value="'+t.abbr+'"'+(t.abbr===sel?' selected':'')+'>(' +t.seed+') '+t.city+' '+t.name+'</option>'});return h}
+function logoSrc(t){return t.logo||FALLBACK}
+function starUrl(a){var t=TEAMS[a];return(t&&t.star)?'https://cdn.nba.com/headshots/nba/latest/1040x760/'+t.star+'.png':''}
+function winnerImg(id,mW){var w=W(id,mW);if(!w)return'<div class="winner-img-slot"></div>';var u=starUrl(w);if(!u)return'<div class="winner-img-slot"></div>';return'<img class="winner-img" src="'+u+'" alt="'+w+'" onerror="this.style.visibility=\'hidden\'">'}
+function propagate(){['west','east'].forEach(function(c){var p=PLAYIN_DEF[c];state[p.gF.id].t=L(p.g78.id,1)||'';state[p.gF.id].b=W(p.g910.id,1)||'';var r1=R1_SEEDS[c];state[r1[0].id].b=W(p.gF.id,1)||'';state[r1[1].id].b=W(p.g78.id,1)||''});for(var tgt in FEED){var src=FEED[tgt];state[tgt].t=W(src[0],4)||'';state[tgt].b=W(src[1],4)||''}}
+
+function card(id,label,tF,bF,tL,mW){var s=state[id];if(!s)return'';var tT=T(s.t),tB=T(s.b),w=W(id,mW),tW=(w&&w===s.t),bW=(w&&w===s.b);function row(p,tm,ab,sc,iW,iL,fx){var cl=iW?'winner':(iL?'eliminated':'');var sl;if(fx&&ab)sl='<select disabled><option>'+tm.city+' '+tm.name+'</option></select>';else sl='<select onchange="setTeam(\''+id+'\',\''+p+'\',this.value)">'+opts(tL,ab)+'</select>';return'<div class="team-row '+cl+'"><span class="team-seed">'+(tm.seed||'?')+'</span><img class="team-logo" src="'+logoSrc(tm)+'" onerror="this.onerror=null;this.src=\''+FALLBACK+'\'" alt="'+tm.name+'"><div class="team-name-select">'+sl+'</div><div class="score-controls"><button class="score-btn" onclick="chg(\''+id+'\',\''+p+'\',-1,'+mW+')">−</button><span class="score-display">'+sc+'</span><button class="score-btn" onclick="chg(\''+id+'\',\''+p+'\',1,'+mW+')">+</button></div></div>'}return'<div class="matchup"><div class="matchup-header">'+label+'</div>'+row('t',tT,s.t,s.ts,tW,bW,tF)+row('b',tB,s.b,s.bs,bW,tW,bF)+'</div>'}
+
+function renderPlayIn(){var el=document.getElementById('bracket-playin');var h='<div class="playin-section">';['west','east'].forEach(function(c){var p=PLAYIN_DEF[c],tm=cTeams(c).filter(function(t){return t.seed>=7});var cl=c==='west'?'west-title':'east-title',lb=c==='west'?'🌵 Western Conference':'🗽 Eastern Conference';h+='<div class="playin-conf"><div class="playin-conf-title '+cl+'">'+lb+' Play-In</div><div class="playin-flow"><div class="playin-step-label">7 vs 8 — Winner = #7 Seed</div>'+card(p.g78.id,'7 vs 8',true,true,tm,1)+'<div class="playin-step-label" style="margin-top:12px">9 vs 10</div>'+card(p.g910.id,'9 vs 10',true,true,tm,1)+'<div class="playin-arrow-down">⬇️ Loser G1 vs Winner G2 — Winner = #8 Seed</div>'+card(p.gF.id,'Play-In Final',true,true,tm,1)+'</div></div>'});h+='</div>';el.innerHTML=h}
+
+function renderConf(c){var el=document.getElementById('bracket-'+c);var tm=cTeams(c),ids=MATCHUP_IDS[c],rN=['First Round','Conf. Semis','Conf. Finals'],rI=[ids.r1,ids.r2,ids.cf];var h='<div class="bracket">';for(var ri=0;ri<3;ri++){var rc=ri===0?'round-r1':(ri===1?'round-r2':'');h+='<div class="round '+rc+'"><div class="round-title">'+rN[ri]+'</div>';var ms=rI[ri];for(var mi=0;mi<ms.length;mi++){var mid=ms[mi],ip=ri===0?'left':'top',wI=winnerImg(mid,4);h+='<div class="matchup-wrap img-'+ip+'">';if(ip==='top')h+=wI;if(ri===0){var d=R1_SEEDS[c][mi],tF=true,bF=d.bot!==null,lb='('+T(state[mid].t).seed+') vs ('+(state[mid].b?T(state[mid].b).seed:'?')+')';if(ip==='left')h+=wI;h+=card(mid,lb,tF,bF,tm,4)}else{var lb2=rN[ri]+' '+(mi+1);if(ri===2)lb2=(c==='west'?'Western':'Eastern')+' Conference Finals';h+=card(mid,lb2,false,false,tm,4)}h+='</div>'}h+='</div>'}h+='</div>';h+=renderStandings(c);el.innerHTML=h}
+
+function renderStandings(c){var d=STANDINGS[c],n=c==='west'?'Western Conference':'Eastern Conference';var h='<div class="standings-section"><div class="standings-title">📊 '+n+' — Final Standings</div><table class="standings-table"><thead><tr><th class="seed-col">#</th><th class="logo-col"></th><th class="team-col">Team</th><th class="record-col">W-L</th></tr></thead><tbody>';d.forEach(function(e){if(e==='---'){h+='<tr class="standings-divider"><td colspan="4">▼ Play-In Tournament ▼</td></tr>';return}var t=TEAMS[e.a],cl=e.s<=6?'playoff-team':'playin-team';h+='<tr class="'+cl+'"><td class="seed-col">'+e.s+'</td><td class="logo-col"><img src="'+t.logo+'" onerror="this.style.display=\'none\'" alt="'+t.abbr+'"></td><td class="team-col">'+t.city+' '+t.name+'</td><td class="record-col">'+t.record+'</td></tr>'});h+='</tbody></table></div>';return h}
+
+function renderFinals(){var el=document.getElementById('bracket-finals');var all=[];for(var k in TEAMS)all.push(TEAMS[k]);all.sort(function(a,b){return a.seed-b.seed});var w=W('fin',4);var h='<div class="finals-container"><div class="finals-matchup"><div class="round-title" style="font-size:1.4rem;margin-bottom:15px">🏆 NBA Finals 2026 🏆</div>'+card('fin','NBA Finals 2026',false,false,all,4)+'</div>';if(w){var ch=T(w);h+='<div class="champion-banner"><div class="trophy">🏆</div><h2>2026 NBA Champion</h2><div class="champion-name">'+ch.city+' '+ch.name+'</div><img src="'+starUrl(w)+'" style="width:120px;border-radius:50%;margin-top:15px;border:3px solid var(--nba-gold);box-shadow:0 0 30px rgba(253,185,39,0.5);filter:contrast(1.3) saturate(1.2)" onerror="this.style.display=\'none\'"></div>'}h+='</div>';el.innerHTML=h}
+
+// === STARS ===
+function aliveTeams(cf){var d={};var ids=MATCHUP_IDS[cf];ids.r1.concat(ids.r2).concat(ids.cf).forEach(function(id){var lo=L(id,4);if(lo)d[lo]=true});var p=PLAYIN_DEF[cf];var l9=L(p.g910.id,1);if(l9)d[l9]=true;var lF=L(p.gF.id,1);if(lF)d[lF]=true;return cTeams(cf).filter(function(t){return!d[t.abbr]})}
+function alivePlayinTeams(cf){var d={};var p=PLAYIN_DEF[cf];var l9=L(p.g910.id,1);if(l9)d[l9]=true;var lF=L(p.gF.id,1);if(lF)d[lF]=true;return cTeams(cf).filter(function(t){return t.seed>=7&&!d[t.abbr]})}
+function pickStars(tab){var pool=[];if(tab==='playin'){pool=alivePlayinTeams('west').concat(alivePlayinTeams('east'))}else if(tab==='west'||tab==='east'){pool=aliveTeams(tab).filter(function(t){return t.seed<=8})}else if(tab==='finals'){var w=aliveTeams('west'),e=aliveTeams('east');if(w.length)pool.push(w[0]);if(e.length)pool.push(e[0])}pool.sort(function(a,b){return a.seed-b.seed});var seen={},r=[];pool.forEach(function(t){if(!seen[t.abbr]){seen[t.abbr]=true;r.push(t.abbr)}});return r.slice(0,2)}
+function updateStars(){var stars=pickStars(currentTab);var key=stars.join(',');if(key===lastStarKey)return;lastStarKey=key;var c=document.getElementById('star-container'),h='';if(stars.length>=1)h+='<img class="star-player left-star active" src="'+starUrl(stars[0])+'" alt="'+stars[0]+'" onerror="this.style.display=\'none\'">';if(stars.length>=2)h+='<img class="star-player right-star active" src="'+starUrl(stars[1])+'" alt="'+stars[1]+'" onerror="this.style.display=\'none\'">';c.innerHTML=h}
+// === SOUNDS ===
+var audioCtx=null;function getAudio(){if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();return audioCtx}
+function playTone(f,d,t,v){try{var c=getAudio(),o=c.createOscillator(),g=c.createGain();o.type=t||'sine';o.frequency.value=f;g.gain.value=v||0.15;o.connect(g);g.connect(c.destination);o.start();g.gain.exponentialRampToValueAtTime(0.001,c.currentTime+d);o.stop(c.currentTime+d)}catch(e){}}
+function soundBuzzer(){playTone(180,0.6,'sawtooth',0.12);setTimeout(function(){playTone(170,0.5,'sawtooth',0.08)},100)}
+function soundSqueak(){try{var c=getAudio(),d=0.12,b=c.createBuffer(1,c.sampleRate*d,c.sampleRate),da=b.getChannelData(0);for(var i=0;i<da.length;i++)da[i]=(Math.random()*2-1)*Math.exp(-i/(da.length*0.3));var s=c.createBufferSource();s.buffer=b;var bp=c.createBiquadFilter();bp.type='bandpass';bp.frequency.value=3000+Math.random()*2000;bp.Q.value=8;var g=c.createGain();g.gain.value=0.15;s.connect(bp);bp.connect(g);g.connect(c.destination);s.start();setTimeout(function(){var s2=c.createBufferSource(),b2=c.createBuffer(1,c.sampleRate*0.08,c.sampleRate),d2=b2.getChannelData(0);for(var j=0;j<d2.length;j++)d2[j]=(Math.random()*2-1)*Math.exp(-j/(d2.length*0.25));s2.buffer=b2;var bp2=c.createBiquadFilter();bp2.type='bandpass';bp2.frequency.value=3500+Math.random()*1500;bp2.Q.value=10;var g2=c.createGain();g2.gain.value=0.1;s2.connect(bp2);bp2.connect(g2);g2.connect(c.destination);s2.start()},60)}catch(e){}}
+function soundSwish(){try{var c=getAudio(),d=0.3,b=c.createBuffer(1,c.sampleRate*d,c.sampleRate),da=b.getChannelData(0);for(var i=0;i<da.length;i++){var t=i/c.sampleRate;da[i]=(Math.random()*2-1)*Math.exp(-t*12)*(1-t/d)}var s=c.createBufferSource();s.buffer=b;var hp=c.createBiquadFilter();hp.type='highpass';hp.frequency.value=2000;var lp=c.createBiquadFilter();lp.type='lowpass';lp.frequency.value=8000;lp.frequency.linearRampToValueAtTime(3000,c.currentTime+d);var g=c.createGain();g.gain.value=0.18;s.connect(hp);hp.connect(lp);lp.connect(g);g.connect(c.destination);s.start()}catch(e){}}
+function soundPumpIt(){var n=[329,349,415,440,349,329,349],ti=[0,100,200,300,500,600,700],du=[90,90,90,180,90,90,200];n.forEach(function(f,i){setTimeout(function(){playTone(f,du[i]/1000,'sawtooth',0.09)},ti[i])})}
+function soundJungle(){var n=[494,440,392,370,330,494,494,330],ti=[0,180,360,540,720,1000,1100,1200],du=[160,160,160,160,250,80,80,300];n.forEach(function(f,i){setTimeout(function(){playTone(f,du[i]/1000,'sawtooth',0.09)},ti[i])})}
+function soundBounce(){playTone(120,0.1,'sine',0.15);setTimeout(function(){playTone(150,0.08,'sine',0.1)},120)}
+var scoreSounds=[soundSqueak,soundSqueak,soundSwish,soundSwish,soundBounce,soundPumpIt,soundJungle];function randomScoreSound(){scoreSounds[Math.floor(Math.random()*scoreSounds.length)]()}
+function soundBrick(){try{var c=getAudio(),o=c.createOscillator(),g=c.createGain();o.type='triangle';o.frequency.value=420;g.gain.value=0.12;o.connect(g);g.connect(c.destination);o.start();o.frequency.exponentialRampToValueAtTime(180,c.currentTime+0.15);g.gain.exponentialRampToValueAtTime(0.001,c.currentTime+0.25);o.stop(c.currentTime+0.3);setTimeout(function(){var o2=c.createOscillator(),g2=c.createGain();o2.type='triangle';o2.frequency.value=350;g2.gain.value=0.07;o2.connect(g2);g2.connect(c.destination);o2.start();o2.frequency.exponentialRampToValueAtTime(150,c.currentTime+0.12);g2.gain.exponentialRampToValueAtTime(0.001,c.currentTime+0.2);o2.stop(c.currentTime+0.25)},100)}catch(e){}}
+function soundGroan(){try{var c=getAudio(),o=c.createOscillator(),g=c.createGain();o.type='sawtooth';o.frequency.value=250;g.gain.value=0.05;o.connect(g);g.connect(c.destination);o.start();o.frequency.linearRampToValueAtTime(150,c.currentTime+0.4);g.gain.exponentialRampToValueAtTime(0.001,c.currentTime+0.5);o.stop(c.currentTime+0.55);var d=0.4,b=c.createBuffer(1,c.sampleRate*d,c.sampleRate),da=b.getChannelData(0);for(var i=0;i<da.length;i++)da[i]=(Math.random()*2-1)*Math.exp(-i/(da.length*0.5))*0.3;var s=c.createBufferSource();s.buffer=b;var lp=c.createBiquadFilter();lp.type='lowpass';lp.frequency.value=800;var gn=c.createGain();gn.gain.value=0.06;s.connect(lp);lp.connect(gn);gn.connect(c.destination);s.start()}catch(e){}}
+var missSounds=[soundBrick,soundBrick,soundGroan];function randomMissSound(){missSounds[Math.floor(Math.random()*missSounds.length)]()}
+function soundCharge(){var n=[523,523,659,784,659,1047],ti=[0,120,240,360,520,680],du=[100,100,100,140,140,300];n.forEach(function(f,i){setTimeout(function(){playTone(f,du[i]/1000,'square',0.1)},ti[i])})}
+function soundSeriesWin(){var n=[523,659,784,1047,784,1047,1319],ti=[0,150,300,450,650,800,950],du=[130,130,130,180,130,130,400];n.forEach(function(f,i){setTimeout(function(){playTone(f,du[i]/1000,'square',0.1)},ti[i])})}
+function soundChampion(){soundSeriesWin();setTimeout(function(){soundBuzzer();var n=[523,659,784,1047,1319,1568],ti=[0,200,400,600,800,1000];n.forEach(function(f,i){setTimeout(function(){playTone(f,0.4,'sawtooth',0.06)},ti[i])})},1200)}
+function soundOrganJingle(){var n=[392,440,494,523,494,440,392,440,494,523,587,659],ti=[0,80,160,240,360,440,560,640,720,800,880,960],du=[70,70,70,100,70,70,70,70,70,70,70,200];n.forEach(function(f,i){setTimeout(function(){playTone(f,du[i]/1000,'square',0.08)},ti[i])})}
+function soundStartup(){setTimeout(function(){playTone(330,0.15,'sine',0.06);setTimeout(function(){playTone(440,0.15,'sine',0.06)},150);setTimeout(function(){playTone(554,0.25,'sine',0.08)},300)},500)}
+var winSounds=[soundCharge,soundSeriesWin,soundOrganJingle];function randomWinSound(){winSounds[Math.floor(Math.random()*winSounds.length)]()}
+
+// === CORE ===
+function renderAll(){propagate();renderPlayIn();renderConf('west');renderConf('east');renderFinals();updateStars();save()}
+function chg(id,pos,delta,mW){var s=state[id],key=pos==='t'?'ts':'bs',other=pos==='t'?'bs':'ts',v=s[key]+delta;if(v<0)v=0;if(v>mW)v=mW;if(v===mW&&s[other]===mW)return;var had=W(id,mW);s[key]=v;var now=W(id,mW);renderAll();if(delta>0){if(!had&&now){if(id==='fin')soundChampion();else randomWinSound()}else randomScoreSound()}else if(delta<0)randomMissSound()}
+function setTeam(id,pos,abbr){var s=state[id];if(pos==='t')s.t=abbr;else s.b=abbr;renderAll()}
+function showTab(tab){currentTab=tab;document.querySelectorAll('.bracket-container').forEach(function(el){el.classList.remove('active')});document.querySelectorAll('.tab-btn').forEach(function(el){el.className='tab-btn'});document.querySelectorAll('.conf-bg').forEach(function(el){el.classList.remove('active')});document.getElementById('bracket-'+tab).classList.add('active');document.getElementById('tab-'+tab).classList.add('active-'+tab);document.getElementById('bg-'+tab).classList.add('active');lastStarKey='';updateStars()}
+function exportData(){var code=btoa(JSON.stringify(state));if(navigator.clipboard)navigator.clipboard.writeText(code).then(function(){showStatus('✅ Kopiert!')}).catch(function(){prompt('Code:',code)});else prompt('Code:',code)}
+function showImportModal(){document.getElementById('import-modal').classList.add('active');document.getElementById('import-textarea').value=''}
+function closeImportModal(){document.getElementById('import-modal').classList.remove('active')}
+function importData(){var code=document.getElementById('import-textarea').value.trim();if(!code)return;try{state=JSON.parse(atob(code));renderAll();closeImportModal();showStatus('✅ Importiert!')}catch(e){showStatus('❌ Ungültiger Code!')}}
+function resetAll(){if(!confirm('Alles zurücksetzen?'))return;state=freshState();renderAll();showStatus('🔄 Reset!')}
+function showStatus(msg){var el=document.getElementById('status-msg');el.textContent=msg;el.classList.add('show');setTimeout(function(){el.classList.remove('show')},2500)}
+
+// === INIT ===
+state=freshState();var loaded=load();if(loaded)state=loaded;
+['west','east'].forEach(function(c){var p=PLAYIN_DEF[c];state[p.g78.id].t=p.g78.t;state[p.g78.id].b=p.g78.b;state[p.g910.id].t=p.g910.t;state[p.g910.id].b=p.g910.b;R1_SEEDS[c].forEach(function(m){if(m.top)state[m.id].t=m.top;if(m.bot)state[m.id].b=m.bot})});
+renderAll();
+document.addEventListener('click',function _s(){soundStartup();document.removeEventListener('click',_s)},{once:true});
+
+// === PWA SERVICE WORKER ===
+if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').catch(function(){})}
+</script>
+</body>
+</html>
