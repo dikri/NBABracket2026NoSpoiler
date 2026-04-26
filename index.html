@@ -224,7 +224,7 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
   <button onclick="resetAll()">🔄 Reset</button>
 </div>
 <div class="date-bar">
-  <span class="date-label">📅</span>
+  <span class="date-label">📅 Watched through</span>
   <button class="date-btn" onclick="chgDate('d',-1)">−</button>
   <span class="date-val" id="date-day">14</span>
   <button class="date-btn" onclick="chgDate('d',1)">+</button>
@@ -431,7 +431,7 @@ function card(id,label,tF,bF,tL,mW){var s=state[id];if(!s)return'';var tT=T(s.t)
   var tracker='';
   if(mW===4){
     var totalGames=s.ts+s.bs;
-    tracker='<div class="game-tracker">';
+    tracker='<div class="game-tracker"><span style="font-size:.5rem;color:var(--text-secondary);font-weight:600;letter-spacing:1px;margin-right:4px">GAME</span>';
     for(var g=1;g<=7;g++){tracker+='<div class="game-box'+(g<=totalGames?' watched':'')+'">'+g+'</div>'}
     tracker+='</div>';
   }
