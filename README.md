@@ -42,3 +42,7 @@ Open the GitHub Pages URL ( https://dikri.github.io/NBABracket2026NoSpoiler/ )  
 ## Credits
 
 Built by Dirk & [Kiro](https://kiro.dev) 🏀
+
+## Disclaimer
+
+This is an unofficial fan project. Not affiliated with or endorsed by the NBA. Team logos and player images are loaded directly from cdn.nba.com and remain the property of the NBA and its teams. For personal, non-commercial use only.
