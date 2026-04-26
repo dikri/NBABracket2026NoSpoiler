@@ -168,6 +168,20 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 @keyframes waveAnim{from{height:10px}to{height:55px}}
 
 /* === RESPONSIVE === */
+
+/* === DATE TRACKER === */
+.date-bar{display:flex;align-items:center;justify-content:center;gap:8px;padding:4px 16px 8px;position:relative;z-index:1}
+.date-bar .date-label{font-family:'Bebas Neue',sans-serif;font-size:1rem;letter-spacing:2px;color:var(--nba-gold)}
+.date-bar .date-btn{width:22px;height:22px;border-radius:6px;border:1px solid var(--border-color);background:rgba(255,255,255,0.05);color:var(--text-secondary);font-size:.85rem;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;line-height:1;padding:0}
+.date-bar .date-btn:hover{background:var(--nba-gold);color:#1a1a1a;border-color:var(--nba-gold)}
+.date-bar .date-val{font-family:'Inter',sans-serif;font-size:.85rem;font-weight:700;color:var(--text-primary);min-width:20px;text-align:center}
+.date-bar .date-month{font-family:'Inter',sans-serif;font-size:.85rem;font-weight:700;color:var(--text-primary);min-width:30px;text-align:center}
+
+/* === GAME TRACKER (boxes under matchup header) === */
+.game-tracker{display:flex;justify-content:center;gap:3px;padding:4px 8px 5px;border-bottom:1px solid var(--border-color);background:rgba(255,255,255,0.01)}
+.game-box{width:20px;height:18px;border-radius:3px;border:1px solid var(--border-color);display:flex;align-items:center;justify-content:center;font-size:.55rem;font-weight:700;color:var(--text-secondary);transition:all .2s;background:rgba(255,255,255,0.02)}
+.game-box.watched{background:rgba(0,200,83,0.15);border-color:rgba(0,200,83,0.4);color:#00c853}
+
 @media(max-width:768px){
   .bracket{gap:18px;justify-content:flex-start;padding:10px 5px}
   .round{min-width:220px}
@@ -208,6 +222,16 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
   <button onclick="exportData()">📤 Export</button>
   <button onclick="showImportModal()">📥 Import</button>
   <button onclick="resetAll()">🔄 Reset</button>
+</div>
+<div class="date-bar">
+  <span class="date-label">📅</span>
+  <button class="date-btn" onclick="chgDate('d',-1)">−</button>
+  <span class="date-val" id="date-day">14</span>
+  <button class="date-btn" onclick="chgDate('d',1)">+</button>
+  <span style="color:var(--text-secondary);font-size:.7rem">.</span>
+  <button class="date-btn" onclick="chgDate('m',-1)">−</button>
+  <span class="date-month" id="date-month">Apr</span>
+  <button class="date-btn" onclick="chgDate('m',1)">+</button>
 </div>
 <div class="tab-bar">
   <button class="tab-btn active-playin" id="tab-playin" onclick="showTab('playin')">🎯 Play-In</button>
@@ -266,6 +290,10 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
     <p><strong>Serie gewonnen</strong> → Fanfare, Charge oder Organ-Jingle</p>
     <p><strong>Championship</strong> → Volle Packung 🏆</p>
   </div>
+  <h3>📅 Datumsanzeige</h3>
+  <p>Über den Tabs siehst du ein Datum mit +/− Buttons. Stell dort den Tag ein, bis zu dem du Spiele geschaut hast. So weißt du beim nächsten Öffnen des NBA League Pass, zu welchem Datum du springen musst — ohne versehentlich Spoiler zu sehen.</p>
+  <h3>🎮 Game Tracker</h3>
+  <p>Unter jeder Playoff-Serie (Best of 7) siehst du Kästchen <strong>1 2 3 4 5 6 7</strong>. Jedes Kästchen wird grün markiert wenn du ein Spiel einträgst (+1). So siehst du auf einen Blick, welche Spiele du schon gesehen hast und wie viele Spiele die Serie insgesamt hatte.</p>
   <h2>Gerätewechsel</h2>
   <p>Fortschritt wird automatisch im Browser gespeichert. <strong>Pro Gerät ein eigener Stand.</strong></p>
   <ol>
@@ -369,11 +397,25 @@ var MATCHUP_IDS={west:{r1:['w1','w2','w3','w4'],r2:['ws1','ws2'],cf:['wcf']},eas
 var R1_SEEDS={west:[{id:'w1',top:'OKC',bot:null},{id:'w2',top:'SAS',bot:null},{id:'w3',top:'DEN',bot:'MIN'},{id:'w4',top:'LAL',bot:'HOU'}],east:[{id:'e1',top:'DET',bot:null},{id:'e2',top:'BOS',bot:null},{id:'e3',top:'NYK',bot:'ATL'},{id:'e4',top:'CLE',bot:'TOR'}]};
 var FEED={ws1:['w1','w2'],ws2:['w3','w4'],es1:['e1','e2'],es2:['e3','e4'],wcf:['ws1','ws2'],ecf:['es1','es2'],fin:['wcf','ecf']};
 var state={},SAVE_KEY='nba2026v5',currentTab='playin',lastStarKey='';
+// Date tracker state (separate from bracket state for compatibility)
+var dateState={m:3,d:14}; // 3=April (0-indexed: 0=Apr,1=May,2=Jun), d=14
+var DATE_KEY='nba2026date';
+var MONTHS=['Apr','May','Jun'];
+var MONTH_DAYS=[30,31,30];
+
+function saveDateState(){try{localStorage.setItem(DATE_KEY,JSON.stringify(dateState))}catch(e){}}
+function loadDateState(){try{var r=localStorage.getItem(DATE_KEY);if(r)dateState=JSON.parse(r)}catch(e){}}
+function chgDate(what,delta){
+  if(what==='d'){dateState.d+=delta;if(dateState.d<1)dateState.d=MONTH_DAYS[dateState.m];if(dateState.d>MONTH_DAYS[dateState.m])dateState.d=1}
+  if(what==='m'){dateState.m+=delta;if(dateState.m<0)dateState.m=2;if(dateState.m>2)dateState.m=0;if(dateState.d>MONTH_DAYS[dateState.m])dateState.d=MONTH_DAYS[dateState.m]}
+  renderDate();saveDateState();
+}
+function renderDate(){document.getElementById('date-day').textContent=dateState.d;document.getElementById('date-month').textContent=MONTHS[dateState.m]}
 
 function allIds(){var a=[];['west','east'].forEach(function(c){var p=PLAYIN_DEF[c];a.push(p.g78.id,p.g910.id,p.gF.id);MATCHUP_IDS[c].r1.forEach(function(x){a.push(x)});MATCHUP_IDS[c].r2.forEach(function(x){a.push(x)});MATCHUP_IDS[c].cf.forEach(function(x){a.push(x)})});a.push('fin');return a}
 function freshState(){var s={};allIds().forEach(function(id){s[id]={t:'',b:'',ts:0,bs:0}});['west','east'].forEach(function(c){var p=PLAYIN_DEF[c];s[p.g78.id]={t:p.g78.t,b:p.g78.b,ts:0,bs:0};s[p.g910.id]={t:p.g910.t,b:p.g910.b,ts:0,bs:0};s[p.gF.id]={t:'',b:'',ts:0,bs:0};R1_SEEDS[c].forEach(function(m){s[m.id]={t:m.top||'',b:m.bot||'',ts:0,bs:0}})});return s}
 function save(){try{localStorage.setItem(SAVE_KEY,JSON.stringify(state))}catch(e){}}
-function load(){try{var r=localStorage.getItem(SAVE_KEY);if(r){var p=JSON.parse(r),f=freshState();for(var k in f){if(p[k])f[k]=p[k]}return f}}catch(e){}return null}
+function load(){try{var r=localStorage.getItem(SAVE_KEY);if(r){var p=JSON.parse(r),f=freshState();for(var k in f){if(p[k]){f[k].t=p[k].t||'';f[k].b=p[k].b||'';f[k].ts=p[k].ts||0;f[k].bs=p[k].bs||0}}return f}}catch(e){}return null}
 function T(a){return(a&&TEAMS[a])?TEAMS[a]:{name:'TBD',city:'',abbr:'',seed:'?',logo:'',record:'',star:''}}
 function W(id,at){var s=state[id];if(!s)return'';if(s.ts>=at&&s.t)return s.t;if(s.bs>=at&&s.b)return s.b;return''}
 function L(id,at){var s=state[id];if(!s)return'';if(s.ts>=at&&s.t)return s.b;if(s.bs>=at&&s.b)return s.t;return''}
@@ -384,7 +426,16 @@ function starUrl(a){var t=TEAMS[a];return(t&&t.star)?'https://cdn.nba.com/headsh
 function winnerImg(id,mW){var w=W(id,mW);if(!w)return'<div class="winner-img-slot"></div>';var u=starUrl(w);if(!u)return'<div class="winner-img-slot"></div>';return'<img class="winner-img" src="'+u+'" alt="'+w+'" onerror="this.style.visibility=\'hidden\'">'}
 function propagate(){['west','east'].forEach(function(c){var p=PLAYIN_DEF[c];state[p.gF.id].t=L(p.g78.id,1)||'';state[p.gF.id].b=W(p.g910.id,1)||'';var r1=R1_SEEDS[c];state[r1[0].id].b=W(p.gF.id,1)||'';state[r1[1].id].b=W(p.g78.id,1)||''});for(var tgt in FEED){var src=FEED[tgt];state[tgt].t=W(src[0],4)||'';state[tgt].b=W(src[1],4)||''}}
 
-function card(id,label,tF,bF,tL,mW){var s=state[id];if(!s)return'';var tT=T(s.t),tB=T(s.b),w=W(id,mW),tW=(w&&w===s.t),bW=(w&&w===s.b);function row(p,tm,ab,sc,iW,iL,fx){var cl=iW?'winner':(iL?'eliminated':'');var sl;if(fx&&ab)sl='<select disabled><option>'+tm.city+' '+tm.name+'</option></select>';else sl='<select onchange="setTeam(\''+id+'\',\''+p+'\',this.value)">'+opts(tL,ab)+'</select>';return'<div class="team-row '+cl+'"><span class="team-seed">'+(tm.seed||'?')+'</span><img class="team-logo" src="'+logoSrc(tm)+'" onerror="this.onerror=null;this.src=\''+FALLBACK+'\'" alt="'+tm.name+'"><div class="team-name-select">'+sl+'</div><div class="score-controls"><button class="score-btn" onclick="chg(\''+id+'\',\''+p+'\',-1,'+mW+')">−</button><span class="score-display">'+sc+'</span><button class="score-btn" onclick="chg(\''+id+'\',\''+p+'\',1,'+mW+')">+</button></div></div>'}return'<div class="matchup"><div class="matchup-header">'+label+'</div>'+row('t',tT,s.t,s.ts,tW,bW,tF)+row('b',tB,s.b,s.bs,bW,tW,bF)+'</div>'}
+function card(id,label,tF,bF,tL,mW){var s=state[id];if(!s)return'';var tT=T(s.t),tB=T(s.b),w=W(id,mW),tW=(w&&w===s.t),bW=(w&&w===s.b);function row(p,tm,ab,sc,iW,iL,fx){var cl=iW?'winner':(iL?'eliminated':'');var sl;if(fx&&ab)sl='<select disabled><option>'+tm.city+' '+tm.name+'</option></select>';else sl='<select onchange="setTeam(\''+id+'\',\''+p+'\',this.value)">'+opts(tL,ab)+'</select>';return'<div class="team-row '+cl+'"><span class="team-seed">'+(tm.seed||'?')+'</span><img class="team-logo" src="'+logoSrc(tm)+'" onerror="this.onerror=null;this.src=\''+FALLBACK+'\'" alt="'+tm.name+'"><div class="team-name-select">'+sl+'</div><div class="score-controls"><button class="score-btn" onclick="chg(\''+id+'\',\''+p+'\',-1,'+mW+')">−</button><span class="score-display">'+sc+'</span><button class="score-btn" onclick="chg(\''+id+'\',\''+p+'\',1,'+mW+')">+</button></div></div>'}
+  // Game tracker: show boxes 1-7 for best-of-7 series (mW=4)
+  var tracker='';
+  if(mW===4){
+    var totalGames=s.ts+s.bs;
+    tracker='<div class="game-tracker">';
+    for(var g=1;g<=7;g++){tracker+='<div class="game-box'+(g<=totalGames?' watched':'')+'">'+g+'</div>'}
+    tracker+='</div>';
+  }
+  return'<div class="matchup"><div class="matchup-header">'+label+'</div>'+tracker+row('t',tT,s.t,s.ts,tW,bW,tF)+row('b',tB,s.b,s.bs,bW,tW,bF)+'</div>'}
 
 function renderPlayIn(){var el=document.getElementById('bracket-playin');var h='<div class="playin-section">';['west','east'].forEach(function(c){var p=PLAYIN_DEF[c],tm=cTeams(c).filter(function(t){return t.seed>=7});var cl=c==='west'?'west-title':'east-title',lb=c==='west'?'🌵 Western Conference':'🗽 Eastern Conference';h+='<div class="playin-conf"><div class="playin-conf-title '+cl+'">'+lb+' Play-In</div><div class="playin-flow"><div class="playin-step-label">7 vs 8 — Winner = #7 Seed (direkt in Playoffs!)</div>'+card(p.g78.id,'7 vs 8',true,true,tm,1)+'<div class="playin-step-label" style="margin-top:12px">9 vs 10 — Loser geht nach Hause</div>'+card(p.g910.id,'9 vs 10',true,true,tm,1)+'<div class="playin-arrow-down">⬇️ Loser von 7v8 vs Winner von 9v10</div>'+card(p.gF.id,'Play-In Final — Winner = #8 Seed',true,true,tm,1)+'</div></div>'});h+='</div>';el.innerHTML=h}
 
@@ -428,13 +479,14 @@ function exportData(){var code=btoa(JSON.stringify(state));if(navigator.clipboar
 function showImportModal(){document.getElementById('import-modal').classList.add('active');document.getElementById('import-textarea').value=''}
 function closeImportModal(){document.getElementById('import-modal').classList.remove('active')}
 function importData(){var code=document.getElementById('import-textarea').value.trim();if(!code)return;try{state=JSON.parse(atob(code));renderAll();closeImportModal();showStatus('✅ Importiert!')}catch(e){showStatus('❌ Ungültiger Code!')}}
-function resetAll(){if(!confirm('Alles zurücksetzen?'))return;state=freshState();renderAll();showStatus('🔄 Reset!')}
+function resetAll(){if(!confirm('Alles zurücksetzen?'))return;state=freshState();dateState={m:0,d:14};saveDateState();renderAll();renderDate();showStatus('🔄 Reset!')}
 function showStatus(msg){var el=document.getElementById('status-msg');el.textContent=msg;el.classList.add('show');setTimeout(function(){el.classList.remove('show')},2500)}
 
 // === INIT ===
 state=freshState();var loaded=load();if(loaded)state=loaded;
 ['west','east'].forEach(function(c){var p=PLAYIN_DEF[c];state[p.g78.id].t=p.g78.t;state[p.g78.id].b=p.g78.b;state[p.g910.id].t=p.g910.t;state[p.g910.id].b=p.g910.b;R1_SEEDS[c].forEach(function(m){if(m.top)state[m.id].t=m.top;if(m.bot)state[m.id].b=m.bot})});
 renderAll();
+loadDateState();renderDate();
 document.addEventListener('click',function _s(){soundStartup();document.removeEventListener('click',_s)},{once:true});
 
 // === PWA SERVICE WORKER ===
