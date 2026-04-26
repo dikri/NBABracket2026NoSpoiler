@@ -37,12 +37,31 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 .star-player.active{opacity:1}
 .star-player.left-star{left:-30px;bottom:0;height:65vh;max-height:550px}
 .star-player.right-star{right:-30px;bottom:0;height:60vh;max-height:500px}
-.winner-img{width:52px;height:52px;border-radius:50%;object-fit:cover;object-position:top;border:2px solid var(--nba-gold);box-shadow:0 0 12px rgba(253,185,39,0.4);filter:contrast(1.3) saturate(1.2);flex-shrink:0;background:#222}
+.winner-img{width:52px;height:52px;border-radius:50%;object-fit:cover;object-position:top;border:2px solid var(--border-color);box-shadow:none;filter:contrast(1.1);flex-shrink:0;background:#222;transition:all .3s}
 .winner-img-slot{width:52px;height:52px;flex-shrink:0}
+/* Dual heads container */
+.heads-wrap{display:flex;flex-direction:column;gap:4px;flex-shrink:0;align-items:center}
+.heads-wrap .winner-img{width:44px;height:44px}
+/* States */
+.winner-img.head-winner{border-color:#00c853;box-shadow:0 0 8px rgba(0,200,83,0.5);filter:contrast(1.3) saturate(1.2)}
+.winner-img.head-loser{border-color:#c8102e;opacity:.45;filter:grayscale(60%)}
+.winner-img.head-neutral{border-color:var(--nba-gold);box-shadow:0 0 6px rgba(253,185,39,0.3)}
+/* Fire glow animation for winner */
+.winner-img.head-fire{border-color:#ff6d00;animation:fireGlow 1.2s ease infinite alternate;filter:contrast(1.3) saturate(1.3)}
+@keyframes fireGlow{
+  0%{box-shadow:0 0 8px rgba(255,109,0,0.5),0 0 16px rgba(255,60,0,0.2)}
+  50%{box-shadow:0 0 14px rgba(255,109,0,0.7),0 0 28px rgba(255,60,0,0.3),0 0 4px rgba(255,200,0,0.4)}
+  100%{box-shadow:0 0 10px rgba(255,109,0,0.6),0 0 20px rgba(255,60,0,0.25)}
+}
+/* Rest/waiting badge */
+.head-badge{font-size:.6rem;text-align:center;margin-top:-2px;letter-spacing:1px}
+.head-badge.resting{color:var(--text-secondary);animation:restPulse 2s ease infinite}
+@keyframes restPulse{0%,100%{opacity:.5}50%{opacity:1}}
+
 .matchup-wrap{display:flex;align-items:center;gap:10px}
 .matchup-wrap.img-left{flex-direction:row}
 .matchup-wrap.img-top{flex-direction:column;align-items:center}
-.matchup-wrap.img-top .winner-img,.matchup-wrap.img-top .winner-img-slot{width:44px;height:44px}
+.matchup-wrap.img-top .heads-wrap .winner-img{width:38px;height:38px}
 .header{text-align:center;padding:12px 20px 4px;position:relative;z-index:1}
 .header h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(1.8rem,5vw,3rem);letter-spacing:4px;background:linear-gradient(135deg,var(--nba-gold),#fff,var(--nba-gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:2px}
 .header .subtitle{font-size:.8rem;color:var(--nba-gold);letter-spacing:3px;text-transform:uppercase;font-weight:600}
@@ -188,7 +207,8 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
   .matchup{width:220px;min-width:220px;max-width:220px}
   .matchup-wrap{justify-content:center}
   .winner-img{width:40px;height:40px}.winner-img-slot{width:40px;height:40px}
-  .matchup-wrap.img-top .winner-img,.matchup-wrap.img-top .winner-img-slot{width:36px;height:36px}
+  .heads-wrap .winner-img{width:36px;height:36px}
+  .matchup-wrap.img-top .heads-wrap .winner-img{width:32px;height:32px}
   .controls-bar{gap:6px}.controls-bar button{font-size:.68rem;padding:5px 10px}
   .star-player.left-star{left:-40px;height:45vh;max-height:350px;opacity:.8}
   .star-player.right-star{right:-40px;height:40vh;max-height:300px;opacity:.8}
@@ -307,9 +327,16 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
   💻 <strong>Chrome:</strong> Adressleiste → Installations-Icon klicken</div>
   <h2>Tipps</h2>
   <div class="tip">🔊 Am besten mit Ton benutzen — die Sounds machen Spaß!</div>
+  <h3>🔥 Spieler-Köpfe neben den Serien</h3>
   <ul>
-    <li>Spielerbilder unten zeigen Stars von Teams die noch im Rennen sind</li>
-    <li>Kleine runde Bilder neben Serien = Star des Gewinnerteams</li>
+    <li>Sobald beide Teams einer Serie feststehen, erscheinen deren Star-Headshots neben dem Matchup</li>
+    <li><strong style="color:#ff6d00">🔥 Feuer-Glow</strong> um den Kopf des Gewinners einer Serie</li>
+    <li><strong style="color:#c8102e">Rot + ausgegraut</strong> für den Verlierer</li>
+    <li><strong>💤</strong> erscheint wenn ein Team auf seinen Gegner wartet (andere Serie noch nicht entschieden)</li>
+  </ul>
+  <h3>Weitere Tipps</h3>
+  <ul>
+    <li>Große Spielerbilder unten zeigen Stars von Teams die noch im Rennen sind</li>
     <li>Auf dem Handy horizontal scrollen für die Bracket-Ansicht</li>
   </ul>
   <p style="text-align:center;margin-top:30px;color:#555;font-size:.75rem">by Dirk &amp; Kiro 🏀</p>
@@ -423,7 +450,33 @@ function cTeams(c){var a=[];for(var k in TEAMS)if(TEAMS[k].conf===c)a.push(TEAMS
 function opts(teams,sel){var h='<option value="">— TBD —</option>';teams.forEach(function(t){h+='<option value="'+t.abbr+'"'+(t.abbr===sel?' selected':'')+'>(' +t.seed+') '+t.city+' '+t.name+'</option>'});return h}
 function logoSrc(t){return t.logo||FALLBACK}
 function starUrl(a){var t=TEAMS[a];return(t&&t.star)?'https://cdn.nba.com/headshots/nba/latest/1040x760/'+t.star+'.png':''}
-function winnerImg(id,mW){var w=W(id,mW);if(!w)return'<div class="winner-img-slot"></div>';var u=starUrl(w);if(!u)return'<div class="winner-img-slot"></div>';return'<img class="winner-img" src="'+u+'" alt="'+w+'" onerror="this.style.visibility=\'hidden\'">'}
+function winnerImg(id,mW){
+  var s=state[id];if(!s)return'<div class="winner-img-slot"></div>';
+  var tAbbr=s.t,bAbbr=s.b,w=W(id,mW);
+  var tUrl=tAbbr?starUrl(tAbbr):'',bUrl=bAbbr?starUrl(bAbbr):'';
+  if(!tAbbr&&!bAbbr)return'<div class="winner-img-slot"></div>';
+  var h='<div class="heads-wrap">';
+  // One team present, other TBD → resting
+  var oneWaiting=((tAbbr&&!bAbbr)||(bAbbr&&!tAbbr))&&!w;
+  // Top team head
+  if(tUrl){
+    var tCls='head-neutral';
+    if(w&&w===tAbbr)tCls='head-fire';
+    else if(w&&w!==tAbbr)tCls='head-loser';
+    h+='<img class="winner-img '+tCls+'" src="'+tUrl+'" alt="'+tAbbr+'" onerror="this.style.visibility=\'hidden\'">';
+    if(oneWaiting&&tAbbr&&!bAbbr)h+='<div class="head-badge resting">💤</div>';
+  }
+  // Bottom team head
+  if(bUrl){
+    var bCls='head-neutral';
+    if(w&&w===bAbbr)bCls='head-fire';
+    else if(w&&w!==bAbbr)bCls='head-loser';
+    h+='<img class="winner-img '+bCls+'" src="'+bUrl+'" alt="'+bAbbr+'" onerror="this.style.visibility=\'hidden\'">';
+    if(oneWaiting&&bAbbr&&!tAbbr)h+='<div class="head-badge resting">💤</div>';
+  }
+  h+='</div>';
+  return h;
+}
 function propagate(){['west','east'].forEach(function(c){var p=PLAYIN_DEF[c];state[p.gF.id].t=L(p.g78.id,1)||'';state[p.gF.id].b=W(p.g910.id,1)||'';var r1=R1_SEEDS[c];state[r1[0].id].b=W(p.gF.id,1)||'';state[r1[1].id].b=W(p.g78.id,1)||''});for(var tgt in FEED){var src=FEED[tgt];state[tgt].t=W(src[0],4)||'';state[tgt].b=W(src[1],4)||''}}
 
 function card(id,label,tF,bF,tL,mW){var s=state[id];if(!s)return'';var tT=T(s.t),tB=T(s.b),w=W(id,mW),tW=(w&&w===s.t),bW=(w&&w===s.b);function row(p,tm,ab,sc,iW,iL,fx){var cl=iW?'winner':(iL?'eliminated':'');var sl;if(fx&&ab)sl='<select disabled><option>'+tm.city+' '+tm.name+'</option></select>';else sl='<select onchange="setTeam(\''+id+'\',\''+p+'\',this.value)">'+opts(tL,ab)+'</select>';return'<div class="team-row '+cl+'"><span class="team-seed">'+(tm.seed||'?')+'</span><img class="team-logo" src="'+logoSrc(tm)+'" onerror="this.onerror=null;this.src=\''+FALLBACK+'\'" alt="'+tm.name+'"><div class="team-name-select">'+sl+'</div><div class="score-controls"><button class="score-btn" onclick="chg(\''+id+'\',\''+p+'\',-1,'+mW+')">−</button><span class="score-display">'+sc+'</span><button class="score-btn" onclick="chg(\''+id+'\',\''+p+'\',1,'+mW+')">+</button></div></div>'}
@@ -439,7 +492,49 @@ function card(id,label,tF,bF,tL,mW){var s=state[id];if(!s)return'';var tT=T(s.t)
 
 function renderPlayIn(){var el=document.getElementById('bracket-playin');var h='<div class="playin-section">';['west','east'].forEach(function(c){var p=PLAYIN_DEF[c],tm=cTeams(c).filter(function(t){return t.seed>=7});var cl=c==='west'?'west-title':'east-title',lb=c==='west'?'🌵 Western Conference':'🗽 Eastern Conference';h+='<div class="playin-conf"><div class="playin-conf-title '+cl+'">'+lb+' Play-In</div><div class="playin-flow"><div class="playin-step-label">7 vs 8 — Winner = #7 Seed (direkt in Playoffs!)</div>'+card(p.g78.id,'7 vs 8',true,true,tm,1)+'<div class="playin-step-label" style="margin-top:12px">9 vs 10 — Loser geht nach Hause</div>'+card(p.g910.id,'9 vs 10',true,true,tm,1)+'<div class="playin-arrow-down">⬇️ Loser von 7v8 vs Winner von 9v10</div>'+card(p.gF.id,'Play-In Final — Winner = #8 Seed',true,true,tm,1)+'</div></div>'});h+='</div>';el.innerHTML=h}
 
-function renderConf(c){var el=document.getElementById('bracket-'+c);var tm=cTeams(c),ids=MATCHUP_IDS[c],rN=['First Round','Conf. Semis','Conf. Finals'],rI=[ids.r1,ids.r2,ids.cf];var h='<div class="bracket">';for(var ri=0;ri<3;ri++){var rc=ri===0?'round-r1':(ri===1?'round-r2':'');h+='<div class="round '+rc+'"><div class="round-title">'+rN[ri]+'</div>';var ms=rI[ri];for(var mi=0;mi<ms.length;mi++){var mid=ms[mi],ip=ri===0?'left':'top',wI=winnerImg(mid,4);h+='<div class="matchup-wrap img-'+ip+'">';if(ip==='top')h+=wI;if(ri===0){var d=R1_SEEDS[c][mi],tF=true,bF=d.bot!==null,lb='('+T(state[mid].t).seed+') vs ('+(state[mid].b?T(state[mid].b).seed:'?')+')';if(ip==='left')h+=wI;h+=card(mid,lb,tF,bF,tm,4)}else{var lb2=rN[ri]+' '+(mi+1);if(ri===2)lb2=(c==='west'?'Western':'Eastern')+' Conference Finals';h+=card(mid,lb2,false,false,tm,4)}h+='</div>'}h+='</div>'}h+='</div>';h+=renderStandings(c);el.innerHTML=h}
+function renderConf(c){
+  var el=document.getElementById('bracket-'+c);
+  var tm=cTeams(c),ids=MATCHUP_IDS[c];
+  var rN=['First Round','Conf. Semis','Conf. Finals'];
+  var rI=[ids.r1,ids.r2,ids.cf];
+  // Build feeder map for rest detection
+  var feedMap={};
+  var cfx=c==='west'?'wcf':'ecf';
+  var s1=c==='west'?'ws1':'es1',s2=c==='west'?'ws2':'es2';
+  feedMap[s1]=[ids.r1[0],ids.r1[1]];
+  feedMap[s2]=[ids.r1[2],ids.r1[3]];
+  feedMap[cfx]=[s1,s2];
+
+  var h='<div class="bracket">';
+  for(var ri=0;ri<3;ri++){
+    var rc=ri===0?'round-r1':(ri===1?'round-r2':'');
+    h+='<div class="round '+rc+'"><div class="round-title">'+rN[ri]+'</div>';
+    var ms=rI[ri];
+    for(var mi=0;mi<ms.length;mi++){
+      var mid=ms[mi];
+      var ip=ri===0?'left':'top';
+      // Generate heads HTML
+      var wI=winnerImg(mid,4);
+      h+='<div class="matchup-wrap img-'+ip+'">';
+      if(ip==='top') h+=wI;
+      if(ri===0){
+        var d=R1_SEEDS[c][mi],tF=true,bF=d.bot!==null;
+        var lb='('+T(state[mid].t).seed+') vs ('+(state[mid].b?T(state[mid].b).seed:'?')+')';
+        if(ip==='left') h+=wI;
+        h+=card(mid,lb,tF,bF,tm,4);
+      } else {
+        var lb2=rN[ri]+' '+(mi+1);
+        if(ri===2) lb2=(c==='west'?'Western':'Eastern')+' Conference Finals';
+        h+=card(mid,lb2,false,false,tm,4);
+      }
+      h+='</div>';
+    }
+    h+='</div>';
+  }
+  h+='</div>';
+  h+=renderStandings(c);
+  el.innerHTML=h;
+}
 
 function renderStandings(c){var d=STANDINGS[c],n=c==='west'?'Western Conference':'Eastern Conference';var h='<div class="standings-section"><div class="standings-title">📊 '+n+' — Final Standings</div><table class="standings-table"><thead><tr><th class="seed-col">#</th><th class="logo-col"></th><th class="team-col">Team</th><th class="record-col">W-L</th></tr></thead><tbody>';d.forEach(function(e){if(e==='---'){h+='<tr class="standings-divider"><td colspan="4">▼ Play-In Tournament ▼</td></tr>';return}var t=TEAMS[e.a],cl=e.s<=6?'playoff-team':'playin-team';h+='<tr class="'+cl+'"><td class="seed-col">'+e.s+'</td><td class="logo-col"><img src="'+t.logo+'" onerror="this.style.display=\'none\'" alt="'+t.abbr+'"></td><td class="team-col">'+t.city+' '+t.name+'</td><td class="record-col">'+t.record+'</td></tr>'});h+='</tbody></table></div>';return h}
 
