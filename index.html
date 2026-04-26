@@ -84,7 +84,7 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 .round-title{font-family:'Bebas Neue',sans-serif;font-size:1rem;letter-spacing:2px;color:var(--text-secondary);text-align:center;margin-bottom:8px}
 .round-r1 .matchup-wrap{margin-bottom:12px}.round-r1 .matchup-wrap:last-child{margin-bottom:0}
 .round-r2 .matchup-wrap{margin-bottom:40px}.round-r2 .matchup-wrap:last-child{margin-bottom:0}
-.matchup{background:var(--bg-card);border:1px solid var(--border-color);border-radius:12px;overflow:hidden;transition:all .3s;box-shadow:0 4px 15px rgba(0,0,0,0.3);width:280px;min-width:280px;max-width:280px}
+.matchup{background:var(--bg-card);border:1px solid var(--border-color);border-radius:12px;overflow:hidden;transition:all .3s;box-shadow:0 4px 15px rgba(0,0,0,0.3);width:320px;min-width:320px;max-width:320px}
 .matchup:hover{border-color:var(--nba-gold);box-shadow:0 4px 20px var(--accent-glow);transform:translateY(-2px)}
 .matchup-header{font-size:.6rem;color:var(--text-secondary);text-align:center;padding:5px 8px 3px;text-transform:uppercase;letter-spacing:1px;border-bottom:1px solid var(--border-color);background:rgba(255,255,255,0.02)}
 .team-row{display:flex;align-items:center;padding:7px 10px;gap:6px;border-bottom:1px solid rgba(255,255,255,0.05);transition:background .2s}
@@ -94,11 +94,6 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 .team-seed{font-size:.65rem;color:var(--text-secondary);min-width:16px;text-align:center;font-weight:700}
 .team-logo{width:24px;height:24px;object-fit:contain;border-radius:4px;flex-shrink:0;background:rgba(255,255,255,0.03)}
 .team-name-select{flex:1;min-width:0}
-.team-name-select select{width:100%;background:transparent;border:1px solid transparent;color:var(--text-primary);font-family:'Inter',sans-serif;font-size:.82rem;font-weight:600;padding:3px 2px;cursor:pointer;border-radius:4px;appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%238892b0'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 4px center;padding-right:18px}
-.team-name-select select:hover{border-color:var(--border-color)}
-.team-name-select select:focus{outline:none;border-color:var(--nba-gold)}
-.team-name-select select option{background:var(--bg-card);color:var(--text-primary)}
-.team-name-select select:disabled{cursor:default;opacity:.9;background-image:none}
 .score-controls{display:flex;align-items:center;gap:3px;flex-shrink:0}
 .score-btn{width:22px;height:22px;border-radius:6px;border:1px solid var(--border-color);background:rgba(255,255,255,0.05);color:var(--text-secondary);font-size:.85rem;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;line-height:1;padding:0}
 .score-btn:hover{background:var(--nba-gold);color:#1a1a1a;border-color:var(--nba-gold)}
@@ -205,7 +200,7 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 @media(max-width:768px){
   .bracket{gap:18px;justify-content:flex-start;padding:10px 5px}
   .round{min-width:220px}
-  .matchup{width:250px;min-width:250px;max-width:250px}
+  .matchup{width:290px;min-width:290px;max-width:290px}
   .matchup-wrap{justify-content:center}
   .winner-img{width:40px;height:40px}.winner-img-slot{width:40px;height:40px}
   .heads-wrap .winner-img{width:36px;height:36px}
@@ -215,7 +210,6 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
   .star-player.left-star{left:-40px;height:45vh;max-height:350px;opacity:.8}
   .star-player.right-star{right:-40px;height:40vh;max-height:300px;opacity:.8}
   .tab-btn{font-size:.85rem;padding:7px 10px;letter-spacing:1px}
-  .team-name-select select{font-size:.75rem}
   .app-nav-btn{font-size:.68rem;padding:6px 12px}
 }
 </style>
@@ -298,13 +292,14 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
     <li>Play-In: Wer zuerst <strong style="color:var(--nba-gold)">1</strong> Sieg hat, gewinnt</li>
     <li>Playoffs: Wer zuerst <strong style="color:var(--nba-gold)">4</strong> Siege hat, gewinnt (Best of 7)</li>
   </ul>
-  <h3>Automatisches Weiterrücken</h3>
+  <h3>Teams rücken automatisch weiter</h3>
   <div class="card">
     <p>🎯 Play-In Gewinner → 🏀 First Round</p>
     <p>🏀 First Round → 🏀 Conference Semis</p>
     <p>🏀 Semis → 🏀 Conference Finals</p>
     <p>🏀 Conf. Finals → 🏆 NBA Finals</p>
   </div>
+  <p>Du musst nichts manuell verschieben — einfach Siege eintragen und die Teams wandern automatisch weiter.</p>
   <h3>Sounds 🔊</h3>
   <div class="card">
     <p><strong>+1</strong> → Schuh-Quietschen, Swish, Bounce, oder Musik-Riff</p>
@@ -481,7 +476,7 @@ function winnerImg(id,mW,layout){
 }
 function propagate(){['west','east'].forEach(function(c){var p=PLAYIN_DEF[c];state[p.gF.id].t=L(p.g78.id,1)||'';state[p.gF.id].b=W(p.g910.id,1)||'';var r1=R1_SEEDS[c];state[r1[0].id].b=W(p.gF.id,1)||'';state[r1[1].id].b=W(p.g78.id,1)||''});for(var tgt in FEED){var src=FEED[tgt];state[tgt].t=W(src[0],4)||'';state[tgt].b=W(src[1],4)||''}}
 
-function card(id,label,tF,bF,tL,mW){var s=state[id];if(!s)return'';var tT=T(s.t),tB=T(s.b),w=W(id,mW),tW=(w&&w===s.t),bW=(w&&w===s.b);function row(p,tm,ab,sc,iW,iL,fx){var cl=iW?'winner':(iL?'eliminated':'');var sl;if(fx&&ab)sl='<select disabled><option>'+tm.city+' '+tm.name+'</option></select>';else sl='<select onchange="setTeam(\''+id+'\',\''+p+'\',this.value)">'+opts(tL,ab)+'</select>';return'<div class="team-row '+cl+'"><span class="team-seed">'+(tm.seed||'?')+'</span><img class="team-logo" src="'+logoSrc(tm)+'" onerror="this.onerror=null;this.src=\''+FALLBACK+'\'" alt="'+tm.name+'"><div class="team-name-select">'+sl+'</div><div class="score-controls"><button class="score-btn" onclick="chg(\''+id+'\',\''+p+'\',-1,'+mW+')">−</button><span class="score-display">'+sc+'</span><button class="score-btn" onclick="chg(\''+id+'\',\''+p+'\',1,'+mW+')">+</button></div></div>'}
+function card(id,label,tF,bF,tL,mW){var s=state[id];if(!s)return'';var tT=T(s.t),tB=T(s.b),w=W(id,mW),tW=(w&&w===s.t),bW=(w&&w===s.b);function row(p,tm,ab,sc,iW,iL){var cl=iW?'winner':(iL?'eliminated':'');var nm=ab?(tm.city+' '+tm.name):'TBD';return'<div class="team-row '+cl+'"><span class="team-seed">'+(tm.seed||'?')+'</span><img class="team-logo" src="'+logoSrc(tm)+'" onerror="this.onerror=null;this.src=\''+FALLBACK+'\'" alt="'+tm.name+'"><div class="team-name-select"><span style="font-size:.82rem;font-weight:600">'+nm+'</span></div><div class="score-controls"><button class="score-btn" onclick="chg(\''+id+'\',\''+p+'\',-1,'+mW+')">−</button><span class="score-display">'+sc+'</span><button class="score-btn" onclick="chg(\''+id+'\',\''+p+'\',1,'+mW+')">+</button></div></div>'}
   // Game tracker: show boxes 1-7 for best-of-7 series (mW=4)
   var tracker='';
   if(mW===4){
@@ -490,7 +485,7 @@ function card(id,label,tF,bF,tL,mW){var s=state[id];if(!s)return'';var tT=T(s.t)
     for(var g=1;g<=7;g++){tracker+='<div class="game-box'+(g<=totalGames?' watched':'')+'">'+g+'</div>'}
     tracker+='</div>';
   }
-  return'<div class="matchup"><div class="matchup-header">'+label+'</div>'+row('t',tT,s.t,s.ts,tW,bW,tF)+row('b',tB,s.b,s.bs,bW,tW,bF)+tracker+'</div>'}
+  return'<div class="matchup"><div class="matchup-header">'+label+'</div>'+row('t',tT,s.t,s.ts,tW,bW)+row('b',tB,s.b,s.bs,bW,tW)+tracker+'</div>'}
 
 function renderPlayIn(){var el=document.getElementById('bracket-playin');var h='<div class="playin-section">';['west','east'].forEach(function(c){var p=PLAYIN_DEF[c],tm=cTeams(c).filter(function(t){return t.seed>=7});var cl=c==='west'?'west-title':'east-title',lb=c==='west'?'🌵 Western Conference':'🗽 Eastern Conference';h+='<div class="playin-conf"><div class="playin-conf-title '+cl+'">'+lb+' Play-In</div><div class="playin-flow"><div class="playin-step-label">7 vs 8 — Winner = #7 Seed (direkt in Playoffs!)</div>'+card(p.g78.id,'7 vs 8',true,true,tm,1)+'<div class="playin-step-label" style="margin-top:12px">9 vs 10 — Loser geht nach Hause</div>'+card(p.g910.id,'9 vs 10',true,true,tm,1)+'<div class="playin-arrow-down">⬇️ Loser von 7v8 vs Winner von 9v10</div>'+card(p.gF.id,'Play-In Final — Winner = #8 Seed',true,true,tm,1)+'</div></div>'});h+='</div>';el.innerHTML=h}
 
