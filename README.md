@@ -10,17 +10,26 @@ A single-page PWA that lets you manually track every series from the Play-In Tou
 
 - **Full Bracket**: Play-In → First Round → Conf. Semis → Conf. Finals → Finals
 - **Auto-Advance**: Winners automatically move to the next round
-- **Game Tracker**: Visual 1-7 boxes per series to see which games you've watched
-- **Date Tracker**: "Watched through" date so you know where to resume on League Pass
-- **Sound Effects**: Sneaker squeaks, swish, arena fanfares, and music riffs
-- **Team Logos & Player Stars**: Dynamic headshots that update as teams get eliminated
-- **Export/Import**: Transfer your bracket between devices
+- **Game Tracker**: Visual `GAME 1 2 3 4 5 6 7` boxes per series — green checkmarks for watched games
+- **Date Tracker**: "Watched through" date picker so you know where to resume on League Pass
+- **🔥 Dynamic Player Heads**: Star headshots appear next to each matchup
+  - Both team stars shown once a matchup is set
+  - Fire glow animation for the series winner
+  - Red/greyed out for the eliminated team
+  - 💤 rest badge when a team is waiting for their next opponent
+- **Sound Effects**: Sneaker squeaks, swish, arena fanfares, brick clanks, and music riffs (Pump It, Welcome to the Jungle)
+- **Big Star Players**: Dynamic full-size player images at the bottom corners, updating as teams get eliminated
+- **Conference Standings**: Final regular season tables in each conference tab
+- **Export/Import**: Transfer your bracket between devices via clipboard code
 - **Installable**: Add to Home Screen on iPhone/Android for an app-like experience
 - **Offline Support**: Service Worker caches the app for offline use
+- **Built-in Guide & Teaser**: Anleitung and animated teaser accessible via top navigation
 
 ## Usage
 
-Open the [GitHub Pages URL](https://dikri.github.io/NBABracket2026NoSpoiler/) in any browser, or install as PWA.
+Open the GitHub Pages URL ( https://dikri.github.io/NBABracket2026NoSpoiler/ )  in any browser, or install as PWA:
+- **iPhone**: Safari → Share → "Add to Home Screen"
+- **Chrome**: Address bar → Install icon
 
 ## Files
 
