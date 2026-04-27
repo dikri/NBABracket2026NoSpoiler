@@ -185,12 +185,19 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 /* === RESPONSIVE === */
 
 /* === DATE TRACKER === */
-.date-bar{display:flex;align-items:center;justify-content:center;gap:8px;padding:4px 16px 8px;position:relative;z-index:1}
-.date-bar .date-label{font-family:'Bebas Neue',sans-serif;font-size:1rem;letter-spacing:2px;color:var(--nba-gold)}
+.date-bar{display:flex;align-items:center;justify-content:center;gap:8px;padding:4px 16px 2px;position:relative;z-index:1;flex-wrap:wrap}
+.date-bar .date-label{font-family:'Bebas Neue',sans-serif;font-size:.9rem;letter-spacing:2px;color:var(--nba-gold)}
 .date-bar .date-btn{width:22px;height:22px;border-radius:6px;border:1px solid var(--border-color);background:rgba(255,255,255,0.05);color:var(--text-secondary);font-size:.85rem;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;line-height:1;padding:0}
 .date-bar .date-btn:hover{background:var(--nba-gold);color:#1a1a1a;border-color:var(--nba-gold)}
 .date-bar .date-val{font-family:'Inter',sans-serif;font-size:.85rem;font-weight:700;color:var(--text-primary);min-width:20px;text-align:center}
 .date-bar .date-month{font-family:'Inter',sans-serif;font-size:.85rem;font-weight:700;color:var(--text-primary);min-width:30px;text-align:center}
+.days-left{text-align:center;font-size:.72rem;color:var(--text-secondary);padding:2px 16px 8px;position:relative;z-index:1}
+.days-left span{color:var(--nba-gold);font-weight:700}
+
+/* === LANG TOGGLE === */
+.lang-toggle{position:absolute;top:10px;right:16px;z-index:11;display:flex;gap:4px}
+.lang-btn{font-size:1.1rem;cursor:pointer;opacity:.4;transition:opacity .2s;background:none;border:none;padding:2px}
+.lang-btn.active{opacity:1}
 
 /* === GAME TRACKER (boxes under matchup header) === */
 .game-tracker{display:flex;justify-content:center;gap:3px;padding:4px 8px 5px;border-top:1px solid var(--border-color);background:rgba(255,255,255,0.01)}
@@ -216,10 +223,16 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 </head>
 <body>
 <!-- APP NAVIGATION -->
+<div style="position:relative">
 <div class="app-nav">
   <button class="app-nav-btn active" onclick="showPage('bracket')">🏀 Bracket</button>
-  <button class="app-nav-btn" onclick="showPage('guide')">📖 Anleitung</button>
+  <button class="app-nav-btn" onclick="showPage('guide')">📖 <span class="i18n" data-en="Guide" data-de="Anleitung">Guide</span></button>
   <button class="app-nav-btn" onclick="showPage('teaser')">🎬 Teaser</button>
+</div>
+<div class="lang-toggle">
+  <button class="lang-btn active" id="lang-en" onclick="setLang('en')">🇬🇧</button>
+  <button class="lang-btn" id="lang-de" onclick="setLang('de')">🇩🇪</button>
+</div>
 </div>
 
 <!-- ==================== BRACKET PAGE ==================== -->
@@ -240,7 +253,7 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
   <button onclick="resetAll()">🔄 Reset</button>
 </div>
 <div class="date-bar">
-  <span class="date-label">📅 Watched through</span>
+  <span class="date-label">📅 <span class="i18n" data-en="Watched through" data-de="Geschaut bis">Watched through</span></span>
   <button class="date-btn" onclick="chgDate('d',-1)">−</button>
   <span class="date-val" id="date-day">14</span>
   <button class="date-btn" onclick="chgDate('d',1)">+</button>
@@ -249,6 +262,7 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
   <span class="date-month" id="date-month">Apr</span>
   <button class="date-btn" onclick="chgDate('m',1)">+</button>
 </div>
+<div class="days-left" id="days-left"></div>
 <div class="tab-bar">
   <button class="tab-btn active-playin" id="tab-playin" onclick="showTab('playin')">🎯 Play-In</button>
   <button class="tab-btn" id="tab-west" onclick="showTab('west')">🌵 Western</button>
@@ -274,84 +288,75 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 
 <!-- ==================== GUIDE PAGE ==================== -->
 <div class="app-page" id="page-guide">
-<div class="guide">
-  <h2>Was ist das?</h2>
-  <p>Eine interaktive App, mit der du die NBA Playoffs 2026 in deinem eigenen Tempo verfolgen kannst. Du trägst die Ergebnisse selbst ein — keine Spoiler, kein Stress.</p>
-  <h2>Die 4 Tabs</h2>
-  <table><thead><tr><th>Tab</th><th>Was ist drin?</th></tr></thead><tbody>
-    <tr><td>🎯 <strong>Play-In</strong></td><td>Play-In Tournament für West und East. Hier startest du.</td></tr>
-    <tr><td>🌵 <strong>Western</strong></td><td>Playoff-Bracket West (First Round → Semis → Conf. Finals) + Tabelle</td></tr>
-    <tr><td>🗽 <strong>Eastern</strong></td><td>Playoff-Bracket East + Tabelle</td></tr>
-    <tr><td>🏆 <strong>Finals</strong></td><td>Das große Finale — NBA Finals 2026</td></tr>
-  </tbody></table>
-  <h2>So funktioniert's</h2>
-  <h3>Ergebnisse eintragen</h3>
-  <ul>
-    <li><strong>+</strong> Button: Ein Sieg eintragen (+1)</li>
-    <li><strong>−</strong> Button: Verklickt weil fettige Finger? Sieg zurücknehmen (-1)</li>
-    <li>Play-In: Wer zuerst <strong style="color:var(--nba-gold)">1</strong> Sieg hat, gewinnt</li>
-    <li>Playoffs: Wer zuerst <strong style="color:var(--nba-gold)">4</strong> Siege hat, gewinnt (Best of 7)</li>
-  </ul>
-  <h3>Teams rücken automatisch weiter</h3>
-  <div class="card">
-    <p>🎯 Play-In Gewinner → 🏀 First Round</p>
-    <p>🏀 First Round → 🏀 Conference Semis</p>
-    <p>🏀 Semis → 🏀 Conference Finals</p>
-    <p>🏀 Conf. Finals → 🏆 NBA Finals</p>
-  </div>
-  <p>Du musst nichts manuell verschieben — einfach Siege eintragen und die Teams wandern automatisch weiter.</p>
-  <h3>Sounds 🔊</h3>
-  <div class="card">
-    <p><strong>+1</strong> → Schuh-Quietschen, Swish, Bounce, oder Musik-Riff</p>
-    <p><strong>-1</strong> → Brick oder Crowd-Stöhnen</p>
-    <p><strong>Serie gewonnen</strong> → Fanfare, Charge oder Organ-Jingle</p>
-    <p><strong>Championship</strong> → Volle Packung 🏆</p>
-  </div>
-  <h3>📅 Datumsanzeige</h3>
-  <p>Über den Tabs siehst du ein Datum mit +/− Buttons. Stell dort den Tag ein, bis zu dem du Spiele geschaut hast. So weißt du beim nächsten Öffnen des NBA League Pass, zu welchem Datum du springen musst — ohne versehentlich Spoiler zu sehen.</p>
+<div class="guide lang-content lang-en">
+  <h2>What is this?</h2>
+  <p>An interactive app to track the 2026 NBA Playoffs at your own pace. You enter results yourself — no spoilers, no stress.</p>
+  <h2>The 4 Tabs</h2>
+  <table><thead><tr><th>Tab</th><th>Content</th></tr></thead><tbody>
+    <tr><td>🎯 <strong>Play-In</strong></td><td>Play-In Tournament. Start here.</td></tr>
+    <tr><td>🌵 <strong>Western</strong></td><td>West bracket + Standings</td></tr>
+    <tr><td>🗽 <strong>Eastern</strong></td><td>East bracket + Standings</td></tr>
+    <tr><td>🏆 <strong>Finals</strong></td><td>NBA Finals 2026</td></tr></tbody></table>
+  <h2>How it works</h2>
+  <ul><li><strong>+</strong> Record a win · <strong>−</strong> Undo a win</li>
+  <li>Play-In: first to <strong style="color:var(--nba-gold)">1</strong> · Playoffs: first to <strong style="color:var(--nba-gold)">4</strong> (Best of 7)</li>
+  <li>Winners advance automatically through all rounds</li></ul>
+  <h3>📅 Watch Date &amp; Countdown</h3>
+  <p>Set the date you've watched through. A countdown shows how many days until you're caught up to live.</p>
   <h3>🎮 Game Tracker</h3>
-  <p>Unter jeder Playoff-Serie (Best of 7) siehst du Kästchen <strong>1 2 3 4 5 6 7</strong>. Jedes Kästchen wird grün markiert wenn du ein Spiel einträgst (+1). So siehst du auf einen Blick, welche Spiele du schon gesehen hast und wie viele Spiele die Serie insgesamt hatte.</p>
-  <h2>Gerätewechsel</h2>
-  <p>Fortschritt wird automatisch im Browser gespeichert. <strong>Pro Gerät ein eigener Stand.</strong></p>
-  <ol>
-    <li><strong>📤 Export</strong> → Code wird kopiert</li>
-    <li>Code aufs andere Gerät bringen (WhatsApp, Notiz, etc.)</li>
-    <li><strong>📥 Import</strong> → Code einfügen → fertig</li>
-  </ol>
-  <p><strong>🔄 Reset</strong> setzt alles zurück (mit Sicherheitsabfrage).</p>
-  <h2>Als App installieren</h2>
-  <div class="tip">📱 <strong>iPhone:</strong> Safari → Teilen-Button → "Zum Home-Bildschirm"<br>
-  💻 <strong>Chrome:</strong> Adressleiste → Installations-Icon klicken</div>
-  <h2>Tipps</h2>
-  <div class="tip">🔊 Am besten mit Ton benutzen — die Sounds machen Spaß!</div>
-  <h3>🔥 Spieler-Köpfe neben den Serien</h3>
-  <ul>
-    <li>Sobald beide Teams einer Serie feststehen, erscheinen deren Star-Headshots neben dem Matchup</li>
-    <li><strong style="color:#ff6d00">🔥 Feuer-Glow</strong> um den Kopf des Gewinners einer Serie</li>
-    <li><strong style="color:#c8102e">Rot + ausgegraut</strong> für den Verlierer</li>
-    <li><strong>💤</strong> erscheint wenn ein Team auf seinen Gegner wartet (andere Serie noch nicht entschieden)</li>
-  </ul>
-  <h3>Weitere Tipps</h3>
-  <ul>
-    <li>Große Spielerbilder unten zeigen Stars von Teams die noch im Rennen sind</li>
-    <li>Auf dem Handy horizontal scrollen für die Bracket-Ansicht</li>
-    <li>📱 <strong>Querformat empfohlen!</strong> Am Handy das Bracket am besten im Querformat (Landscape) nutzen — so siehst du mehr Runden auf einmal</li>
-  </ul>
+  <p><strong>GAME 1-7</strong> boxes turn green as you enter wins.</p>
+  <h3>🔥 Player Heads</h3>
+  <ul><li>Star headshots appear once both teams are set</li>
+  <li>🔥 Fire glow = series winner · Red = eliminated · 💤 = resting</li></ul>
+  <h3>🔊 Sounds</h3>
+  <p>+1 → squeaks, swish, music riffs · -1 → brick, groan · Series win → fanfare · Championship → full package</p>
+  <h2>Export / Import</h2>
+  <p>📤 Export copies bracket + watch date. Send to other device, 📥 Import there. 🔄 Reset clears all.</p>
+  <h2>Install as app</h2>
+  <div class="tip">📱 iPhone: Safari → Share → "Add to Home Screen" · 💻 Chrome: Install icon · 📱 Landscape mode recommended!</div>
   <p style="text-align:center;margin-top:30px;color:#555;font-size:.75rem">by Dirk &amp; Kiro 🏀</p>
-  <p style="text-align:center;margin-top:12px;color:#444;font-size:.65rem;line-height:1.5">This is an unofficial fan project. Not affiliated with the NBA. Team logos and player images are loaded from cdn.nba.com and remain the property of the NBA and its teams.</p>
+  <p style="text-align:center;margin-top:8px;color:#444;font-size:.6rem">Unofficial fan project. Not affiliated with the NBA. Images from cdn.nba.com.</p>
+</div>
+<div class="guide lang-content lang-de" style="display:none">
+  <h2>Was ist das?</h2>
+  <p>Eine interaktive App für die NBA Playoffs 2026 in deinem eigenen Tempo. Du trägst Ergebnisse selbst ein — keine Spoiler, kein Stress.</p>
+  <h2>Die 4 Tabs</h2>
+  <table><thead><tr><th>Tab</th><th>Inhalt</th></tr></thead><tbody>
+    <tr><td>🎯 <strong>Play-In</strong></td><td>Play-In Tournament. Hier starten.</td></tr>
+    <tr><td>🌵 <strong>Western</strong></td><td>West-Bracket + Tabelle</td></tr>
+    <tr><td>🗽 <strong>Eastern</strong></td><td>East-Bracket + Tabelle</td></tr>
+    <tr><td>🏆 <strong>Finals</strong></td><td>NBA Finals 2026</td></tr></tbody></table>
+  <h2>So funktioniert's</h2>
+  <ul><li><strong>+</strong> Sieg eintragen · <strong>−</strong> Sieg zurücknehmen</li>
+  <li>Play-In: wer zuerst <strong style="color:var(--nba-gold)">1</strong> · Playoffs: wer zuerst <strong style="color:var(--nba-gold)">4</strong> (Best of 7)</li>
+  <li>Gewinner rücken automatisch in die nächste Runde</li></ul>
+  <h3>📅 Datum &amp; Countdown</h3>
+  <p>Stell ein, bis wann du geschaut hast. Ein Countdown zeigt, wie viele Tage du noch hinter Live bist.</p>
+  <h3>🎮 Game Tracker</h3>
+  <p><strong>GAME 1-7</strong> Kästchen werden grün wenn du Siege einträgst.</p>
+  <h3>🔥 Spieler-Köpfe</h3>
+  <ul><li>Headshots erscheinen sobald beide Teams feststehen</li>
+  <li>🔥 Feuer = Gewinner · Rot = Raus · 💤 = Wartet</li></ul>
+  <h3>🔊 Sounds</h3>
+  <p>+1 → Quietschen, Swish, Musik · -1 → Brick, Stöhnen · Serien-Sieg → Fanfare · Championship → Volle Packung</p>
+  <h2>Export / Import</h2>
+  <p>📤 Export kopiert Bracket + Datum. An anderes Gerät senden, dort 📥 Import. 🔄 Reset löscht alles.</p>
+  <h2>Als App installieren</h2>
+  <div class="tip">📱 iPhone: Safari → Teilen → "Zum Home-Bildschirm" · 💻 Chrome: Installations-Icon · 📱 Querformat empfohlen!</div>
+  <p style="text-align:center;margin-top:30px;color:#555;font-size:.75rem">by Dirk &amp; Kiro 🏀</p>
+  <p style="text-align:center;margin-top:8px;color:#444;font-size:.6rem">Inoffizielles Fan-Projekt. Nicht mit der NBA verbunden. Bilder von cdn.nba.com.</p>
 </div>
 </div>
-
 <!-- ==================== TEASER PAGE ==================== -->
 <div class="app-page" id="page-teaser">
 <div class="teaser-wrap" id="teaserWrap">
   <button class="teaser-play-btn" id="teaserPlayBtn" onclick="startTeaser()">▶ PLAY TEASER</button>
   <div class="teaser-progress" id="teaserProgress"></div>
   <div class="scene s1" id="ts1"><h1>🏀 NBA PLAYOFFS 2026</h1><div class="sub">#DS4'S PERSONAL BRACKET</div></div>
-  <div class="scene s2" id="ts2"><div class="feature" id="tf1"><span class="emoji">🏀</span>DEIN TEMPO. DEINE PLAYOFFS.<div class="desc">Keine Spoiler — du trägst alles selbst ein</div></div></div>
-  <div class="scene s2" id="ts3"><div class="feature" id="tf2"><span class="emoji">📊</span>PLAY-IN → FIRST ROUND → FINALS<div class="desc">Automatisches Weiterrücken der Gewinner</div></div></div>
-  <div class="scene s4" id="ts4"><div class="sound-text">🔊 MIT SOUND</div><div class="waves"><div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div></div><div class="sound-desc">Swish • Sneaker-Quietschen • Arena-Fanfaren • Musik-Riffs</div></div>
-  <div class="scene s6" id="ts5"><h1>🏀 GAME TIME 🏀</h1><div class="cta">Tippe auf "Bracket" um loszulegen</div><div class="by">by Dirk &amp; Kiro</div></div>
+  <div class="scene s2" id="ts2"><div class="feature" id="tf1"><span class="emoji">🏀</span>YOUR PACE. YOUR PLAYOFFS.<div class="desc">No spoilers — you track everything yourself</div></div></div>
+  <div class="scene s2" id="ts3"><div class="feature" id="tf2"><span class="emoji">🔥</span>AUTO-ADVANCE · GAME TRACKER · FIRE HEADS<div class="desc">Winners move on · GAME 1-7 boxes · 🔥 glow for winners</div></div></div>
+  <div class="scene s4" id="ts4"><div class="sound-text">🔊 WITH SOUND</div><div class="waves"><div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div></div><div class="sound-desc">Swish · Squeaks · Fanfares · Pump It · Welcome to the Jungle</div></div>
+  <div class="scene s6" id="ts5"><h1>🏀 GAME TIME 🏀</h1><div class="cta">📅 Watch Date · 📤 Export/Import · 🇬🇧🇩🇪</div><div class="by">by Dirk &amp; Kiro</div></div>
 </div>
 </div>
 
@@ -436,7 +441,44 @@ function chgDate(what,delta){
   if(what==='m'){dateState.m+=delta;if(dateState.m<0)dateState.m=2;if(dateState.m>2)dateState.m=0;if(dateState.d>MONTH_DAYS[dateState.m])dateState.d=MONTH_DAYS[dateState.m]}
   renderDate();saveDateState();
 }
-function renderDate(){document.getElementById('date-day').textContent=dateState.d;document.getElementById('date-month').textContent=MONTHS[dateState.m]}
+function renderDate(){
+  document.getElementById('date-day').textContent=dateState.d;
+  document.getElementById('date-month').textContent=MONTHS[dateState.m];
+  renderDaysLeft();
+}
+
+// Days until live
+function renderDaysLeft(){
+  var now=new Date();
+  var watchDate=new Date(2026,3+dateState.m,dateState.d); // month 3=April(0-idx in JS Date: 3=Apr)
+  var diff=Math.ceil((now-watchDate)/(1000*60*60*24));
+  var el=document.getElementById('days-left');
+  if(diff<=0){el.innerHTML='🟢 <span>'+tx('live','Live!')+'</span>'}
+  else if(diff===1){el.innerHTML='→ <span>1</span> '+tx('dayLeft','day behind live')}
+  else{el.innerHTML='→ <span>'+diff+'</span> '+tx('daysLeft','days behind live')}
+}
+
+// === i18n ===
+var curLang='en';
+var LANG_KEY='nba2026lang';
+var TXT={
+  en:{live:"You're live!",dayLeft:'day behind live',daysLeft:'days behind live'},
+  de:{live:'Du bist live!',dayLeft:'Tag hinter Live',daysLeft:'Tage hinter Live'}
+};
+function tx(key,fallback){return(TXT[curLang]&&TXT[curLang][key])||fallback}
+function setLang(lang){
+  curLang=lang;
+  try{localStorage.setItem(LANG_KEY,lang)}catch(e){}
+  document.getElementById('lang-en').classList.toggle('active',lang==='en');
+  document.getElementById('lang-de').classList.toggle('active',lang==='de');
+  // Toggle guide pages
+  document.querySelectorAll('.lang-en').forEach(function(el){el.style.display=lang==='en'?'':'none'});
+  document.querySelectorAll('.lang-de').forEach(function(el){el.style.display=lang==='de'?'':'none'});
+  // Update i18n spans
+  document.querySelectorAll('.i18n').forEach(function(el){el.textContent=el.getAttribute('data-'+lang)||el.textContent});
+  renderDaysLeft();
+}
+function loadLang(){try{var l=localStorage.getItem(LANG_KEY);if(l)curLang=l}catch(e){}}
 
 function allIds(){var a=[];['west','east'].forEach(function(c){var p=PLAYIN_DEF[c];a.push(p.g78.id,p.g910.id,p.gF.id);MATCHUP_IDS[c].r1.forEach(function(x){a.push(x)});MATCHUP_IDS[c].r2.forEach(function(x){a.push(x)});MATCHUP_IDS[c].cf.forEach(function(x){a.push(x)})});a.push('fin');return a}
 function freshState(){var s={};allIds().forEach(function(id){s[id]={t:'',b:'',ts:0,bs:0}});['west','east'].forEach(function(c){var p=PLAYIN_DEF[c];s[p.g78.id]={t:p.g78.t,b:p.g78.b,ts:0,bs:0};s[p.g910.id]={t:p.g910.t,b:p.g910.b,ts:0,bs:0};s[p.gF.id]={t:'',b:'',ts:0,bs:0};R1_SEEDS[c].forEach(function(m){s[m.id]={t:m.top||'',b:m.bot||'',ts:0,bs:0}})});return s}
@@ -568,10 +610,25 @@ function renderAll(){propagate();renderPlayIn();renderConf('west');renderConf('e
 function chg(id,pos,delta,mW){var s=state[id],key=pos==='t'?'ts':'bs',other=pos==='t'?'bs':'ts',v=s[key]+delta;if(v<0)v=0;if(v>mW)v=mW;if(v===mW&&s[other]===mW)return;var had=W(id,mW);s[key]=v;var now=W(id,mW);renderAll();if(delta>0){if(!had&&now){if(id==='fin')soundChampion();else randomWinSound()}else randomScoreSound()}else if(delta<0)randomMissSound()}
 function setTeam(id,pos,abbr){var s=state[id];if(pos==='t')s.t=abbr;else s.b=abbr;renderAll()}
 function showTab(tab){currentTab=tab;document.querySelectorAll('.bracket-container').forEach(function(el){el.classList.remove('active')});document.querySelectorAll('.tab-btn').forEach(function(el){el.className='tab-btn'});document.querySelectorAll('.conf-bg').forEach(function(el){el.classList.remove('active')});document.getElementById('bracket-'+tab).classList.add('active');document.getElementById('tab-'+tab).classList.add('active-'+tab);document.getElementById('bg-'+tab).classList.add('active');lastStarKey='';updateStars()}
-function exportData(){var code=btoa(JSON.stringify(state));if(navigator.clipboard)navigator.clipboard.writeText(code).then(function(){showStatus('✅ Kopiert!')}).catch(function(){prompt('Code:',code)});else prompt('Code:',code)}
+function exportData(){
+  var exp={state:state,date:dateState};
+  var code=btoa(JSON.stringify(exp));
+  if(navigator.clipboard)navigator.clipboard.writeText(code).then(function(){showStatus('✅ Data copied! Paste into Import on your other device.')}).catch(function(){prompt('Copy this code:',code)});
+  else prompt('Copy this code:',code);
+}
 function showImportModal(){document.getElementById('import-modal').classList.add('active');document.getElementById('import-textarea').value=''}
 function closeImportModal(){document.getElementById('import-modal').classList.remove('active')}
-function importData(){var code=document.getElementById('import-textarea').value.trim();if(!code)return;try{state=JSON.parse(atob(code));renderAll();closeImportModal();showStatus('✅ Importiert!')}catch(e){showStatus('❌ Ungültiger Code!')}}
+function importData(){
+  var code=document.getElementById('import-textarea').value.trim();
+  if(!code)return;
+  try{
+    var parsed=JSON.parse(atob(code));
+    // Support both old format (just state) and new format ({state,date})
+    if(parsed.state){state=parsed.state;if(parsed.date){dateState=parsed.date;saveDateState();renderDate()}}
+    else{state=parsed}
+    renderAll();closeImportModal();showStatus('✅ Imported!');
+  }catch(e){showStatus('❌ Invalid code!')}
+}
 function resetAll(){if(!confirm('Alles zurücksetzen?'))return;state=freshState();dateState={m:0,d:14};saveDateState();renderAll();renderDate();showStatus('🔄 Reset!')}
 function showStatus(msg){var el=document.getElementById('status-msg');el.textContent=msg;el.classList.add('show');setTimeout(function(){el.classList.remove('show')},2500)}
 
@@ -580,6 +637,7 @@ state=freshState();var loaded=load();if(loaded)state=loaded;
 ['west','east'].forEach(function(c){var p=PLAYIN_DEF[c];state[p.g78.id].t=p.g78.t;state[p.g78.id].b=p.g78.b;state[p.g910.id].t=p.g910.t;state[p.g910.id].b=p.g910.b;R1_SEEDS[c].forEach(function(m){if(m.top)state[m.id].t=m.top;if(m.bot)state[m.id].b=m.bot})});
 renderAll();
 loadDateState();renderDate();
+loadLang();setLang(curLang);
 document.addEventListener('click',function _s(){soundStartup();document.removeEventListener('click',_s)},{once:true});
 
 // === PWA SERVICE WORKER ===
