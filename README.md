@@ -4,13 +4,13 @@ Track the 2026 NBA Playoffs at your own pace. No spoilers, no stress.
 
 ## What is this?
 
-A single-page PWA that lets you manually track every series from the Play-In Tournament through the NBA Finals. Built for fans who watch games on delay via League Pass and need a spoiler-free way to keep score.
+A single-page PWA that lets you manually track every series from the Play-In Tournament through the NBA Finals. Built for fans who watch games on delay and need a spoiler-free way to keep score.
 
 ## Features
 
 - **Full Bracket**: Play-In → First Round → Conf. Semis → Conf. Finals → Finals
 - **Auto-Advance**: Winners automatically move to the next round
-- **Game Tracker**: Visual `GAME 1 2 3 4 5 6 7` boxes per series — green checkmarks for watched games
+- **Game Tracker**: Visual `GAME 1 2 3 4 5 6 7` boxes per series — ▲ green for top team wins, ▼ gold for bottom team wins
 - **Date Tracker**: "Watched through" date picker so you know where to resume on League Pass
 - **🔥 Dynamic Player Heads**: Star headshots appear next to each matchup
   - Both team stars shown once a matchup is set
