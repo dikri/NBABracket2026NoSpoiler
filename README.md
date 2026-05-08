@@ -4,32 +4,37 @@ Track the 2026 NBA Playoffs at your own pace. No spoilers, no stress.
 
 ## What is this?
 
-A single-page PWA that lets you manually track every series from the Play-In Tournament through the NBA Finals. Built for fans who watch games on delay and need a spoiler-free way to keep score.
+A single-page PWA that lets you manually track every series from the Play-In Tournament through the NBA Finals. Built for fans who watch games on delay via League Pass and need a spoiler-free way to keep score.
 
 ## Features
 
 - **Full Bracket**: Play-In → First Round → Conf. Semis → Conf. Finals → Finals
 - **Auto-Advance**: Winners automatically move to the next round
-- **Game Tracker**: Visual `GAME 1 2 3 4 5 6 7` boxes per series — ▲ green for top team wins, ▼ gold for bottom team wins
-- **Date Tracker**: "Watched through" date picker so you know where to resume on League Pass
-- **🔥 Dynamic Player Heads**: Star headshots appear next to each matchup
+- **Game Tracker**: `GAME 1-7` boxes between teams — ▲ green arrow for top team wins, ▼ gold arrow for bottom team wins
+- **Date Tracker**: "Watched through" date + countdown showing days behind live
+- **🔥 Dynamic Player Heads**: Star headshots next to each matchup
   - Both team stars shown once a matchup is set
   - Fire glow animation for the series winner
   - Red/greyed out for the eliminated team
-  - 💤 rest badge when a team is waiting for their next opponent
-- **Sound Effects**: Sneaker squeaks, swish, arena fanfares, brick clanks, and music riffs (Pump It, Welcome to the Jungle)
-- **Big Star Players**: Dynamic full-size player images at the bottom corners, updating as teams get eliminated
-- **Conference Standings**: Final regular season tables in each conference tab
-- **Export/Import**: Transfer your bracket between devices via clipboard code
-- **Installable**: Add to Home Screen on iPhone/Android for an app-like experience
-- **Offline Support**: Service Worker caches the app for offline use
-- **Built-in Guide & Teaser**: Anleitung and animated teaser accessible via top navigation
+  - 💤 rest badge when waiting for next opponent
+- **Conference Champion Badge**: Team logo + title appears when a conference winner is decided
+- **Finals Celebration**: All 5 starters of the champion team appear with fire glow
+- **Mirrored Brackets**: West flows left→right, East flows right→left (like a real TV bracket)
+- **+ Button Lock**: Disabled once a series is decided (no accidental extra clicks)
+- **Sound Effects**: Sneaker squeaks, swish, arena fanfares, brick clanks, Pump It, Welcome to the Jungle
+- **Big Star Players**: Dynamic full-size player images at bottom corners, showing 2 stars from same team when only 1 team remains
+- **Language Toggle**: 🇬🇧 EN / 🇩🇪 DE switch for the guide
+- **Export/Import**: Transfer bracket + watch date between devices
+- **Installable PWA**: Add to Home Screen on iPhone/Android
+- **Offline Support**: Service Worker caches the app
+- **Built-in Guide & Animated Teaser**
 
 ## Usage
 
-Open the GitHub Pages URL ( https://dikri.github.io/NBABracket2026NoSpoiler/ )  in any browser, or install as PWA:
+Open the GitHub Pages URL in any browser, or install as PWA:
 - **iPhone**: Safari → Share → "Add to Home Screen"
 - **Chrome**: Address bar → Install icon
+- **📱 Landscape mode recommended** on mobile
 
 ## Files
 
@@ -45,4 +50,4 @@ Built by Dirk & [Kiro](https://kiro.dev) 🏀
 
 ## Disclaimer
 
-This is an unofficial fan project. Not affiliated with or endorsed by the NBA. Team logos and player images are loaded directly from cdn.nba.com and remain the property of the NBA and its teams. For personal, non-commercial use only.
+Unofficial fan project. Not affiliated with or endorsed by the NBA. Team logos and player images loaded from cdn.nba.com, property of the NBA and its teams. For personal, non-commercial use only.
