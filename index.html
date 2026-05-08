@@ -42,7 +42,7 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 /* Dual heads container */
 .heads-wrap{display:flex;flex-direction:column;gap:4px;flex-shrink:0;align-items:center}
 .heads-wrap.heads-row{flex-direction:row;gap:6px}
-.heads-wrap .winner-img{width:44px;height:44px}
+.heads-wrap .winner-img{width:56px;height:56px}
 /* States */
 .winner-img.head-winner{border-color:#00c853;box-shadow:0 0 8px rgba(0,200,83,0.5);filter:contrast(1.3) saturate(1.2)}
 .winner-img.head-loser{border-color:#c8102e;opacity:.45;filter:grayscale(60%)}
@@ -61,7 +61,13 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 
 .matchup-wrap{display:flex;align-items:center;gap:10px}
 .matchup-wrap.img-left{flex-direction:row}
+.matchup-wrap.img-right{flex-direction:row-reverse}
 .matchup-wrap.img-top{flex-direction:column;align-items:center}
+.matchup-wrap.img-top .heads-wrap.heads-row .winner-img{width:50px;height:50px}
+/* Finals: heads on sides, large */
+.matchup-wrap.img-sides{flex-direction:row;align-items:center;gap:12px}
+.matchup-wrap.img-sides .heads-wrap{flex-direction:column}
+.matchup-wrap.img-sides .heads-wrap .winner-img{width:70px;height:70px}
 .matchup-wrap.img-top .heads-wrap .winner-img{width:38px;height:38px}
 .header{text-align:center;padding:12px 20px 4px;position:relative;z-index:1}
 .header h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(1.8rem,5vw,3rem);letter-spacing:4px;background:linear-gradient(135deg,var(--nba-gold),#fff,var(--nba-gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:2px}
@@ -87,8 +93,8 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 .matchup{background:var(--bg-card);border:1px solid var(--border-color);border-radius:12px;overflow:hidden;transition:all .3s;box-shadow:0 4px 15px rgba(0,0,0,0.3);width:320px;min-width:320px;max-width:320px}
 .matchup:hover{border-color:var(--nba-gold);box-shadow:0 4px 20px var(--accent-glow);transform:translateY(-2px)}
 .matchup-header{font-size:.6rem;color:var(--text-secondary);text-align:center;padding:5px 8px 3px;text-transform:uppercase;letter-spacing:1px;border-bottom:1px solid var(--border-color);background:rgba(255,255,255,0.02)}
-.team-row{display:flex;align-items:center;padding:7px 10px;gap:6px;border-bottom:1px solid rgba(255,255,255,0.05);transition:background .2s}
-.team-row:last-child{border-bottom:none}
+.team-row{display:flex;align-items:center;padding:7px 10px;gap:6px;transition:background .2s}
+.team-row:last-child{border-top:1px solid rgba(255,255,255,0.05)}
 .team-row.winner{background:rgba(0,200,83,0.08)}
 .team-row.eliminated{opacity:.4}
 .team-seed{font-size:.65rem;color:var(--text-secondary);min-width:16px;text-align:center;font-weight:700}
@@ -201,13 +207,19 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 .lang-btn .code{font-size:.55rem;font-weight:700;letter-spacing:1px}
 .lang-btn.active{opacity:1;border-color:var(--nba-gold);color:var(--nba-gold)}
 
-/* === GAME TRACKER (boxes between teams) === */
-.game-tracker{display:flex;justify-content:center;gap:3px;padding:4px 8px 5px;border-top:1px solid var(--border-color);background:rgba(255,255,255,0.01)}
-.game-box{width:20px;height:22px;border-radius:3px;border:1px solid var(--border-color);display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:.55rem;font-weight:700;color:var(--text-secondary);transition:all .2s;background:rgba(255,255,255,0.02);line-height:1;gap:0}
-.game-box .gnum{font-size:.55rem}
-.game-box .garrow{font-size:.45rem;line-height:1}
-.game-box.won-top{background:rgba(0,200,83,0.12);border-color:rgba(0,200,83,0.4);color:#00c853}
-.game-box.won-bot{background:rgba(253,185,39,0.12);border-color:rgba(253,185,39,0.4);color:var(--nba-gold)}
+/* === GAME TRACKER (between teams) === */
+.game-tracker{display:flex;justify-content:center;align-items:center;gap:2px;padding:10px 8px;background:rgba(255,255,255,0.01)}
+.game-tracker .game-label{font-size:.5rem;color:var(--text-secondary);font-weight:600;letter-spacing:1px;margin-right:3px}
+.game-box{width:20px;height:20px;border-radius:3px;border:1px solid var(--border-color);display:flex;align-items:center;justify-content:center;font-size:.6rem;font-weight:700;color:var(--text-secondary);transition:all .2s;background:rgba(255,255,255,0.02);position:relative}
+.game-box .gnum{font-size:.6rem}
+.game-box .garrow-top{position:absolute;top:-8px;left:50%;transform:translateX(-50%);font-size:.5rem;line-height:1;color:#00c853;opacity:0;transition:opacity .2s}
+.game-box .garrow-bot{position:absolute;bottom:-8px;left:50%;transform:translateX(-50%);font-size:.5rem;line-height:1;color:var(--nba-gold);opacity:0;transition:opacity .2s}
+.game-box.won-top{border-color:rgba(0,200,83,0.5);background:rgba(0,200,83,0.08)}
+.game-box.won-top .garrow-top{opacity:1}
+.game-box.won-top .gnum{color:#00c853}
+.game-box.won-bot{border-color:rgba(253,185,39,0.5);background:rgba(253,185,39,0.08)}
+.game-box.won-bot .garrow-bot{opacity:1}
+.game-box.won-bot .gnum{color:var(--nba-gold)}
 
 @media(max-width:768px){
   .bracket{gap:18px;justify-content:flex-start;padding:10px 5px}
@@ -215,9 +227,10 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
   .matchup{width:290px;min-width:290px;max-width:290px}
   .matchup-wrap{justify-content:center}
   .winner-img{width:40px;height:40px}.winner-img-slot{width:40px;height:40px}
-  .heads-wrap .winner-img{width:36px;height:36px}
-  .heads-wrap.heads-row .winner-img{width:34px;height:34px}
-  .matchup-wrap.img-top .heads-wrap .winner-img{width:32px;height:32px}
+  .heads-wrap .winner-img{width:48px;height:48px}
+  .heads-wrap.heads-row .winner-img{width:40px;height:40px}
+  .matchup-wrap.img-top .heads-wrap.heads-row .winner-img{width:38px;height:38px}
+  .matchup-wrap.img-sides .heads-wrap .winner-img{width:55px;height:55px}
   .controls-bar{gap:6px}.controls-bar button{font-size:.68rem;padding:5px 10px}
   .star-player.left-star{left:-40px;height:45vh;max-height:350px;opacity:.8}
   .star-player.right-star{right:-40px;height:40vh;max-height:300px;opacity:.8}
@@ -357,11 +370,63 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 <div class="teaser-wrap" id="teaserWrap">
   <button class="teaser-play-btn" id="teaserPlayBtn" onclick="startTeaser()">▶ PLAY TEASER</button>
   <div class="teaser-progress" id="teaserProgress"></div>
+  <!-- Scene 1: Title -->
   <div class="scene s1" id="ts1"><h1>🏀 NBA PLAYOFFS 2026</h1><div class="sub">#DS4'S PERSONAL BRACKET</div></div>
-  <div class="scene s2" id="ts2"><div class="feature" id="tf1"><span class="emoji">🏀</span>YOUR PACE. YOUR PLAYOFFS.<div class="desc">No spoilers — you track everything yourself</div></div></div>
-  <div class="scene s2" id="ts3"><div class="feature" id="tf2"><span class="emoji">🔥</span>AUTO-ADVANCE · GAME TRACKER · FIRE HEADS<div class="desc">Winners move on · GAME 1-7 boxes · 🔥 glow for winners</div></div></div>
+  <!-- Scene 2: Score demo -->
+  <div class="scene" id="ts2" style="flex-direction:column;gap:12px;align-items:center">
+    <div style="font-family:'Bebas Neue',sans-serif;font-size:1.2rem;letter-spacing:3px;color:var(--nba-gold)">TAP + TO RECORD A WIN</div>
+    <div style="display:flex;align-items:center;gap:10px">
+      <div style="display:flex;flex-direction:column;gap:4px;align-items:center" id="td-heads">
+        <img src="https://cdn.nba.com/headshots/nba/latest/1040x760/1628983.png" style="width:44px;height:44px;border-radius:50%;border:2px solid var(--border-color);object-fit:cover;object-position:top;background:#222;transition:all .5s" id="td-head-top">
+        <img src="https://cdn.nba.com/headshots/nba/latest/1040x760/1626164.png" style="width:44px;height:44px;border-radius:50%;border:2px solid var(--border-color);object-fit:cover;object-position:top;background:#222;transition:all .5s" id="td-head-bot">
+      </div>
+      <div style="background:var(--bg-card);border:1px solid var(--border-color);border-radius:12px;width:280px;overflow:hidden">
+        <div style="font-size:.6rem;color:var(--text-secondary);text-align:center;padding:4px;border-bottom:1px solid var(--border-color)">(1) vs (8)</div>
+        <div style="display:flex;align-items:center;gap:6px;padding:7px 10px">
+          <span style="font-size:.65rem;color:var(--text-secondary);font-weight:700">1</span>
+          <img src="https://cdn.nba.com/logos/nba/1610612760/global/L/logo.svg" style="width:22px;height:22px">
+          <span style="font-size:.82rem;font-weight:600;flex:1">Oklahoma City Thunder</span>
+          <span style="font-size:1rem;font-weight:700;color:var(--nba-gold)" id="td-score-t">0</span>
+          <span id="td-btn-t" style="width:22px;height:22px;border-radius:6px;border:1px solid var(--border-color);background:rgba(255,255,255,0.05);color:var(--text-secondary);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.85rem;transition:all .1s">+</span>
+        </div>
+        <div style="display:flex;justify-content:center;align-items:center;gap:2px;padding:10px 8px" id="td-tracker">
+          <span style="font-size:.5rem;color:var(--text-secondary);font-weight:600;margin-right:3px">GAME</span>
+          <span class="game-box" id="tg1"><span class="garrow-top">▲</span><span class="gnum">1</span><span class="garrow-bot">▼</span></span>
+          <span class="game-box" id="tg2"><span class="garrow-top">▲</span><span class="gnum">2</span><span class="garrow-bot">▼</span></span>
+          <span class="game-box" id="tg3"><span class="garrow-top">▲</span><span class="gnum">3</span><span class="garrow-bot">▼</span></span>
+          <span class="game-box" id="tg4"><span class="garrow-top">▲</span><span class="gnum">4</span><span class="garrow-bot">▼</span></span>
+          <span class="game-box" id="tg5"><span class="garrow-top">▲</span><span class="gnum">5</span><span class="garrow-bot">▼</span></span>
+          <span class="game-box" id="tg6"><span class="garrow-top">▲</span><span class="gnum">6</span><span class="garrow-bot">▼</span></span>
+          <span class="game-box" id="tg7"><span class="garrow-top">▲</span><span class="gnum">7</span><span class="garrow-bot">▼</span></span>
+        </div>
+        <div style="display:flex;align-items:center;gap:6px;padding:7px 10px;border-top:1px solid rgba(255,255,255,0.05)">
+          <span style="font-size:.65rem;color:var(--text-secondary);font-weight:700">8</span>
+          <img src="https://cdn.nba.com/logos/nba/1610612756/global/L/logo.svg" style="width:22px;height:22px">
+          <span style="font-size:.82rem;font-weight:600;flex:1">Phoenix Suns</span>
+          <span style="font-size:1rem;font-weight:700;color:var(--nba-gold)" id="td-score-b">0</span>
+          <span id="td-btn-b" style="width:22px;height:22px;border-radius:6px;border:1px solid var(--border-color);background:rgba(255,255,255,0.05);color:var(--text-secondary);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.85rem;transition:all .1s">+</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Scene 3: Auto advance -->
+  <div class="scene" id="ts3" style="flex-direction:column;gap:16px">
+    <div style="font-family:'Bebas Neue',sans-serif;font-size:1.2rem;letter-spacing:3px;color:var(--nba-gold)">AUTO-ADVANCE</div>
+    <div style="display:flex;align-items:center;gap:12px">
+      <div id="ta-box1" style="background:var(--bg-card);border:2px solid #00c853;border-radius:10px;padding:8px 14px;font-size:.8rem;font-weight:600;opacity:0;transition:all .4s;transform:translateX(-20px)">OKC 4-2 PHX</div>
+      <span id="ta-arrow" style="color:var(--nba-gold);font-size:1.5rem;opacity:0;transition:opacity .4s">→</span>
+      <div id="ta-box2" style="background:var(--bg-card);border:2px solid var(--nba-gold);border-radius:10px;padding:8px 14px;font-size:.8rem;font-weight:600;opacity:0;transition:all .4s;transform:translateX(20px)">OKC vs ???</div>
+    </div>
+    <div id="ta-fire" style="font-size:2rem;opacity:0;transition:opacity .4s">🔥</div>
+  </div>
+  <!-- Scene 4: Sounds -->
   <div class="scene s4" id="ts4"><div class="sound-text">🔊 WITH SOUND</div><div class="waves"><div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div></div><div class="sound-desc">Swish · Squeaks · Fanfares · Pump It · Welcome to the Jungle</div></div>
-  <div class="scene s6" id="ts5"><h1>🏀 GAME TIME 🏀</h1><div class="cta">📅 Watch Date · 📤 Export/Import · 🇬🇧🇩🇪</div><div class="by">by Dirk &amp; Kiro</div></div>
+  <!-- Scene 5: Features list -->
+  <div class="scene" id="ts5" style="flex-direction:column;gap:10px">
+    <div id="tf-items" style="display:flex;flex-direction:column;gap:8px;align-items:center"></div>
+  </div>
+  <!-- Scene 6: CTA -->
+  <div class="scene s6" id="ts6"><h1>🏀 GAME TIME 🏀</h1><div class="cta">Tap "Bracket" to start</div><div class="by">by Dirk &amp; Kiro</div></div>
 </div>
 </div>
 
@@ -385,15 +450,19 @@ function showPage(p){
 }
 
 // === TEASER ===
-var tScenes=[{id:'ts1',dur:3500},{id:'ts2',dur:3000,on:function(){setTimeout(function(){document.getElementById('tf1').classList.add('show')},200)}},{id:'ts3',dur:3000,on:function(){setTimeout(function(){document.getElementById('tf2').classList.add('show')},200)}},{id:'ts4',dur:3500},{id:'ts5',dur:3500}];
+var tScenes=[
+  {id:'ts1',dur:3000},
+  {id:'ts2',dur:5000,on:animateScore},
+  {id:'ts3',dur:4500,on:animateAdvance},
+  {id:'ts4',dur:3000},
+  {id:'ts5',dur:4000,on:animateFeatures},
+  {id:'ts6',dur:3500}
+];
 var tTotal=0;tScenes.forEach(function(s){tTotal+=s.dur});
 var tRunning=false;
 function startTeaser(){
   if(tRunning)return;tRunning=true;
   document.getElementById('teaserPlayBtn').style.display='none';
-  // Reset features
-  document.getElementById('tf1').classList.remove('show');
-  document.getElementById('tf2').classList.remove('show');
   var start=Date.now(),idx=-1;
   function show(i){tScenes.forEach(function(s){document.getElementById(s.id).classList.remove('active')});document.getElementById(tScenes[i].id).classList.add('active');if(tScenes[i].on)tScenes[i].on()}
   var timer=setInterval(function(){
@@ -401,31 +470,101 @@ function startTeaser(){
     document.getElementById('teaserProgress').style.width=(now/tTotal*100)+'%';
     var acc=0;
     for(var i=0;i<tScenes.length;i++){acc+=tScenes[i].dur;if(now<acc){if(i!==idx){idx=i;show(i)}break}}
-    if(now>=tTotal){clearInterval(timer);tRunning=false;document.getElementById('teaserPlayBtn').style.display='';document.getElementById('teaserPlayBtn').textContent='↻ NOCHMAL'}
+    if(now>=tTotal){clearInterval(timer);tRunning=false;document.getElementById('teaserPlayBtn').style.display='';document.getElementById('teaserPlayBtn').textContent='↻ REPLAY'}
   },50);
+}
+function animateScore(){
+  var sT=document.getElementById('td-score-t'),sB=document.getElementById('td-score-b');
+  var btnT=document.getElementById('td-btn-t'),btnB=document.getElementById('td-btn-b');
+  var headT=document.getElementById('td-head-top'),headB=document.getElementById('td-head-bot');
+  sT.textContent='0';sB.textContent='0';
+  headT.style.borderColor='var(--border-color)';headT.style.boxShadow='none';
+  headB.style.borderColor='var(--border-color)';headB.style.boxShadow='none';headB.style.opacity='1';
+  for(var i=1;i<=7;i++){var el=document.getElementById('tg'+i);el.className='game-box'}
+  // Sequence: OKC, OKC, PHX, OKC, PHX, OKC = 4-2
+  var seq=[{who:'t',ts:1,bs:0},{who:'t',ts:2,bs:0},{who:'b',ts:2,bs:1},{who:'t',ts:3,bs:1},{who:'b',ts:3,bs:2},{who:'t',ts:4,bs:2}];
+  seq.forEach(function(step,i){
+    setTimeout(function(){
+      var btn=step.who==='t'?btnT:btnB;
+      btn.style.transform='scale(0.7)';btn.style.background='var(--nba-gold)';btn.style.color='#1a1a1a';
+      setTimeout(function(){btn.style.transform='';btn.style.background='';btn.style.color=''},150);
+      sT.textContent=step.ts;sB.textContent=step.bs;
+      var gEl=document.getElementById('tg'+(i+1));
+      gEl.className='game-box '+(step.who==='t'?'won-top':'won-bot');
+      // Final win: fire head + disable buttons
+      if(i===5){
+        headT.style.borderColor='#ff6d00';headT.style.boxShadow='0 0 12px rgba(255,109,0,0.6)';
+        headB.style.borderColor='#c8102e';headB.style.opacity='.4';
+        btnT.style.opacity='.3';btnB.style.opacity='.3';
+      }
+    },(i+1)*700);
+  });
+}
+function animateAdvance(){
+  var b1=document.getElementById('ta-box1'),ar=document.getElementById('ta-arrow'),b2=document.getElementById('ta-box2'),fi=document.getElementById('ta-fire');
+  b1.style.opacity='0';b1.style.transform='translateX(-20px)';ar.style.opacity='0';b2.style.opacity='0';b2.style.transform='translateX(20px)';fi.style.opacity='0';
+  setTimeout(function(){b1.style.opacity='1';b1.style.transform='translateX(0)'},400);
+  setTimeout(function(){ar.style.opacity='1'},1200);
+  setTimeout(function(){b2.style.opacity='1';b2.style.transform='translateX(0)'},1800);
+  setTimeout(function(){fi.style.opacity='1'},2800);
+}
+function animateFeatures(){
+  var items=['📅 Watch Date + Days Behind Live','🎮 GAME 1-7 Tracker with ▲▼ Arrows','🔥 Fire Heads for Series Winners','💤 Rest Badge for Waiting Teams','📤 Export/Import Between Devices','🏆 Conference Champion + Finals Celebration'];
+  var container=document.getElementById('tf-items');container.innerHTML='';
+  items.forEach(function(txt,i){
+    setTimeout(function(){
+      var el=document.createElement('div');
+      el.style.cssText='font-size:.85rem;font-weight:600;color:var(--text-primary);opacity:0;transform:translateY(10px);transition:all .3s;padding:4px 12px;background:var(--bg-card);border:1px solid var(--border-color);border-radius:8px';
+      el.textContent=txt;container.appendChild(el);
+      setTimeout(function(){el.style.opacity='1';el.style.transform='translateY(0)'},50);
+    },i*500);
+  });
 }
 // === TEAM DATA ===
 var TEAMS={
-OKC:{name:'Thunder',city:'Oklahoma City',abbr:'OKC',seed:1,conf:'west',record:'64-18',logo:'https://cdn.nba.com/logos/nba/1610612760/global/L/logo.svg',star:'1628983'},
-SAS:{name:'Spurs',city:'San Antonio',abbr:'SAS',seed:2,conf:'west',record:'62-20',logo:'https://cdn.nba.com/logos/nba/1610612759/global/L/logo.svg',star:'1641705'},
-DEN:{name:'Nuggets',city:'Denver',abbr:'DEN',seed:3,conf:'west',record:'54-28',logo:'https://cdn.nba.com/logos/nba/1610612743/global/L/logo.svg',star:'203999'},
-LAL:{name:'Lakers',city:'Los Angeles',abbr:'LAL',seed:4,conf:'west',record:'53-29',logo:'https://cdn.nba.com/logos/nba/1610612747/global/L/logo.svg',star:'1629029'},
-HOU:{name:'Rockets',city:'Houston',abbr:'HOU',seed:5,conf:'west',record:'52-30',logo:'https://cdn.nba.com/logos/nba/1610612745/global/L/logo.svg',star:'201142'},
-MIN:{name:'Timberwolves',city:'Minnesota',abbr:'MIN',seed:6,conf:'west',record:'49-33',logo:'https://cdn.nba.com/logos/nba/1610612750/global/L/logo.svg',star:'1630162'},
-POR:{name:'Trail Blazers',city:'Portland',abbr:'POR',seed:7,conf:'west',record:'42-40',logo:'https://cdn.nba.com/logos/nba/1610612757/global/L/logo.svg',star:'1630703'},
-PHX:{name:'Suns',city:'Phoenix',abbr:'PHX',seed:8,conf:'west',record:'45-37',logo:'https://cdn.nba.com/logos/nba/1610612756/global/L/logo.svg',star:'1626164'},
-GSW:{name:'Warriors',city:'Golden State',abbr:'GSW',seed:10,conf:'west',record:'37-45',logo:'https://cdn.nba.com/logos/nba/1610612744/global/L/logo.svg',star:'201939'},
-LAC:{name:'Clippers',city:'LA Clippers',abbr:'LAC',seed:9,conf:'west',record:'41-41',logo:'https://cdn.nba.com/logos/nba/1610612746/global/L/logo.svg',star:'202695'},
-DET:{name:'Pistons',city:'Detroit',abbr:'DET',seed:1,conf:'east',record:'60-22',logo:'https://cdn.nba.com/logos/nba/1610612765/global/L/logo.svg',star:'1630595'},
-BOS:{name:'Celtics',city:'Boston',abbr:'BOS',seed:2,conf:'east',record:'56-26',logo:'https://cdn.nba.com/logos/nba/1610612738/global/L/logo.svg',star:'1628369'},
-NYK:{name:'Knicks',city:'New York',abbr:'NYK',seed:3,conf:'east',record:'53-29',logo:'https://cdn.nba.com/logos/nba/1610612752/global/L/logo.svg',star:'1628365'},
-CLE:{name:'Cavaliers',city:'Cleveland',abbr:'CLE',seed:4,conf:'east',record:'52-30',logo:'https://cdn.nba.com/logos/nba/1610612739/global/L/logo.svg',star:'1628378'},
-TOR:{name:'Raptors',city:'Toronto',abbr:'TOR',seed:5,conf:'east',record:'46-36',logo:'https://cdn.nba.com/logos/nba/1610612761/global/L/logo.svg',star:'1630567'},
-ATL:{name:'Hawks',city:'Atlanta',abbr:'ATL',seed:6,conf:'east',record:'46-36',logo:'https://cdn.nba.com/logos/nba/1610612737/global/L/logo.svg',star:'1629027'},
-PHI:{name:'76ers',city:'Philadelphia',abbr:'PHI',seed:7,conf:'east',record:'45-37',logo:'https://cdn.nba.com/logos/nba/1610612755/global/L/logo.svg',star:'203954'},
-ORL:{name:'Magic',city:'Orlando',abbr:'ORL',seed:8,conf:'east',record:'45-37',logo:'https://cdn.nba.com/logos/nba/1610612753/global/L/logo.svg',star:'1631094'},
-CHA:{name:'Hornets',city:'Charlotte',abbr:'CHA',seed:9,conf:'east',record:'43-39',logo:'https://cdn.nba.com/logos/nba/1610612766/global/L/logo.svg',star:'1630163'},
-MIA:{name:'Heat',city:'Miami',abbr:'MIA',seed:10,conf:'east',record:'41-41',logo:'https://cdn.nba.com/logos/nba/1610612748/global/L/logo.svg',star:'1628389'}};
+OKC:{name:'Thunder',city:'Oklahoma City',abbr:'OKC',seed:1,conf:'west',record:'64-18',logo:'https://cdn.nba.com/logos/nba/1610612760/global/L/logo.svg',star:'1628983',star2:'1631114'},
+SAS:{name:'Spurs',city:'San Antonio',abbr:'SAS',seed:2,conf:'west',record:'62-20',logo:'https://cdn.nba.com/logos/nba/1610612759/global/L/logo.svg',star:'1641705',star2:'1630190'},
+DEN:{name:'Nuggets',city:'Denver',abbr:'DEN',seed:3,conf:'west',record:'54-28',logo:'https://cdn.nba.com/logos/nba/1610612743/global/L/logo.svg',star:'203999',star2:'1627750'},
+LAL:{name:'Lakers',city:'Los Angeles',abbr:'LAL',seed:4,conf:'west',record:'53-29',logo:'https://cdn.nba.com/logos/nba/1610612747/global/L/logo.svg',star:'1629029',star2:'1630559'},
+HOU:{name:'Rockets',city:'Houston',abbr:'HOU',seed:5,conf:'west',record:'52-30',logo:'https://cdn.nba.com/logos/nba/1610612745/global/L/logo.svg',star:'201142',star2:'1630224'},
+MIN:{name:'Timberwolves',city:'Minnesota',abbr:'MIN',seed:6,conf:'west',record:'49-33',logo:'https://cdn.nba.com/logos/nba/1610612750/global/L/logo.svg',star:'1630162',star2:'1631098'},
+POR:{name:'Trail Blazers',city:'Portland',abbr:'POR',seed:7,conf:'west',record:'42-40',logo:'https://cdn.nba.com/logos/nba/1610612757/global/L/logo.svg',star:'1630703',star2:'1630549'},
+PHX:{name:'Suns',city:'Phoenix',abbr:'PHX',seed:8,conf:'west',record:'45-37',logo:'https://cdn.nba.com/logos/nba/1610612756/global/L/logo.svg',star:'1626164',star2:'203507'},
+GSW:{name:'Warriors',city:'Golden State',abbr:'GSW',seed:10,conf:'west',record:'37-45',logo:'https://cdn.nba.com/logos/nba/1610612744/global/L/logo.svg',star:'201939',star2:'1630228'},
+LAC:{name:'Clippers',city:'LA Clippers',abbr:'LAC',seed:9,conf:'west',record:'41-41',logo:'https://cdn.nba.com/logos/nba/1610612746/global/L/logo.svg',star:'202695',star2:'1629639'},
+DET:{name:'Pistons',city:'Detroit',abbr:'DET',seed:1,conf:'east',record:'60-22',logo:'https://cdn.nba.com/logos/nba/1610612765/global/L/logo.svg',star:'1630595',star2:'1631105'},
+BOS:{name:'Celtics',city:'Boston',abbr:'BOS',seed:2,conf:'east',record:'56-26',logo:'https://cdn.nba.com/logos/nba/1610612738/global/L/logo.svg',star:'1628369',star2:'1627759'},
+NYK:{name:'Knicks',city:'New York',abbr:'NYK',seed:3,conf:'east',record:'53-29',logo:'https://cdn.nba.com/logos/nba/1610612752/global/L/logo.svg',star:'1628365',star2:'1626157'},
+CLE:{name:'Cavaliers',city:'Cleveland',abbr:'CLE',seed:4,conf:'east',record:'52-30',logo:'https://cdn.nba.com/logos/nba/1610612739/global/L/logo.svg',star:'1628378',star2:'1630596'},
+TOR:{name:'Raptors',city:'Toronto',abbr:'TOR',seed:5,conf:'east',record:'46-36',logo:'https://cdn.nba.com/logos/nba/1610612761/global/L/logo.svg',star:'1630567',star2:'1629056'},
+ATL:{name:'Hawks',city:'Atlanta',abbr:'ATL',seed:6,conf:'east',record:'46-36',logo:'https://cdn.nba.com/logos/nba/1610612737/global/L/logo.svg',star:'1629027',star2:'1631106'},
+PHI:{name:'76ers',city:'Philadelphia',abbr:'PHI',seed:7,conf:'east',record:'45-37',logo:'https://cdn.nba.com/logos/nba/1610612755/global/L/logo.svg',star:'203954',star2:'1630178'},
+ORL:{name:'Magic',city:'Orlando',abbr:'ORL',seed:8,conf:'east',record:'45-37',logo:'https://cdn.nba.com/logos/nba/1610612753/global/L/logo.svg',star:'1631094',star2:'1630532'},
+CHA:{name:'Hornets',city:'Charlotte',abbr:'CHA',seed:9,conf:'east',record:'43-39',logo:'https://cdn.nba.com/logos/nba/1610612766/global/L/logo.svg',star:'1630163',star2:'1631410'},
+MIA:{name:'Heat',city:'Miami',abbr:'MIA',seed:10,conf:'east',record:'41-41',logo:'https://cdn.nba.com/logos/nba/1610612748/global/L/logo.svg',star:'1628389',star2:'203994'}};
+// Roster IDs for celebration (verified from nba.com/player URLs)
+var ROSTERS={
+OKC:['1628983','1631114','1630533','1629006','1630168'],
+SAS:['1641705','1628368','1642264','1630170','1642844'],
+DEN:['203999','1627750','203932','1631128','1629661'],
+LAL:['1629029','1630559','2544','1629060','1629028'],
+HOU:['201142','1630578','1641708','1631095','1627832'],
+MIN:['1630162','203944','203497','1630183','1628978'],
+POR:['1630703','1630166','201950','1642270','1630549'],
+PHX:['1626164','1630224','1628960','1631109','1628415'],
+GSW:['201939','203110','202710','204001','1641730'],
+LAC:['202695','1629639','1628978','204001','203468'],
+DET:['1630595','1631105','1641709','202699','1642261'],
+BOS:['1628369','1627759','1628401','1630202','1629674'],
+NYK:['1628365','1626157','1628969','1628384','1628404'],
+CLE:['1628378','1630596','1628386','201935','1629622'],
+TOR:['1630567','1629628','1627742','1630193','1627751'],
+ATL:['1630552','1630700','1630228','1630168','1642259'],
+PHI:['203954','1630178','202331','1626162','1642841'],
+ORL:['1631094','1630532','1630217','1630596','1628980'],
+CHA:['1630163','1641706','1628970','1629632','1630200'],
+MIA:['1628389','1629639','1626181','1631107','1642267']
+};
 var FALLBACK='data:image/svg+xml,'+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40"><circle cx="20" cy="20" r="18" fill="#333"/><text x="20" y="26" text-anchor="middle" fill="#888" font-size="14">🏀</text></svg>');
 var STANDINGS={west:[{a:'OKC',s:1},{a:'SAS',s:2},{a:'DEN',s:3},{a:'LAL',s:4},{a:'HOU',s:5},{a:'MIN',s:6},'---',{a:'POR',s:7},{a:'PHX',s:8},{a:'LAC',s:9},{a:'GSW',s:10}],east:[{a:'DET',s:1},{a:'BOS',s:2},{a:'NYK',s:3},{a:'CLE',s:4},{a:'TOR',s:5},{a:'ATL',s:6},'---',{a:'PHI',s:7},{a:'ORL',s:8},{a:'CHA',s:9},{a:'MIA',s:10}]};
 var PLAYIN_DEF={west:{g78:{id:'pi_w78',t:'POR',b:'PHX'},g910:{id:'pi_w910',t:'LAC',b:'GSW'},gF:{id:'pi_wF'}},east:{g78:{id:'pi_e78',t:'PHI',b:'ORL'},g910:{id:'pi_e910',t:'CHA',b:'MIA'},gF:{id:'pi_eF'}}};
@@ -496,6 +635,7 @@ function cTeams(c){var a=[];for(var k in TEAMS)if(TEAMS[k].conf===c)a.push(TEAMS
 function opts(teams,sel){var h='<option value="">— TBD —</option>';teams.forEach(function(t){h+='<option value="'+t.abbr+'"'+(t.abbr===sel?' selected':'')+'>'+t.city+' '+t.name+'</option>'});return h}
 function logoSrc(t){return t.logo||FALLBACK}
 function starUrl(a){var t=TEAMS[a];return(t&&t.star)?'https://cdn.nba.com/headshots/nba/latest/1040x760/'+t.star+'.png':''}
+function star2Url(a){var t=TEAMS[a];return(t&&t.star2)?'https://cdn.nba.com/headshots/nba/latest/1040x760/'+t.star2+'.png':''}
 function winnerImg(id,mW,layout){
   var s=state[id];if(!s)return'<div class="winner-img-slot"></div>';
   var tAbbr=s.t,bAbbr=s.b,w=W(id,mW);
@@ -523,24 +663,28 @@ function winnerImg(id,mW,layout){
 }
 function propagate(){['west','east'].forEach(function(c){var p=PLAYIN_DEF[c];state[p.gF.id].t=L(p.g78.id,1)||'';state[p.gF.id].b=W(p.g910.id,1)||'';var r1=R1_SEEDS[c];state[r1[0].id].b=W(p.gF.id,1)||'';state[r1[1].id].b=W(p.g78.id,1)||''});for(var tgt in FEED){var src=FEED[tgt];state[tgt].t=W(src[0],4)||'';state[tgt].b=W(src[1],4)||''}}
 
-function card(id,label,tF,bF,tL,mW){var s=state[id];if(!s)return'';var tT=T(s.t),tB=T(s.b),w=W(id,mW),tW=(w&&w===s.t),bW=(w&&w===s.b);function row(p,tm,ab,sc,iW,iL){var cl=iW?'winner':(iL?'eliminated':'');var nm=ab?(tm.city+' '+tm.name):'TBD';return'<div class="team-row '+cl+'"><span class="team-seed">'+(tm.seed||'?')+'</span><img class="team-logo" src="'+logoSrc(tm)+'" onerror="this.onerror=null;this.src=\''+FALLBACK+'\'" alt="'+tm.name+'"><div class="team-name-select"><span style="font-size:.82rem;font-weight:600">'+nm+'</span></div><div class="score-controls"><button class="score-btn" onclick="chg(\''+id+'\',\''+p+'\',-1,'+mW+')">−</button><span class="score-display">'+sc+'</span><button class="score-btn" onclick="chg(\''+id+'\',\''+p+'\',1,'+mW+')">+</button></div></div>'}
-  // Game tracker: show boxes 1-7 for best-of-7 series (mW=4)
+function card(id,label,tF,bF,tL,mW){var s=state[id];if(!s)return'';var tT=T(s.t),tB=T(s.b),w=W(id,mW),tW=(w&&w===s.t),bW=(w&&w===s.b);
+  var seriesOver=!!w;
+  function row(p,tm,ab,sc,iW,iL){var cl=iW?'winner':(iL?'eliminated':'');var nm=ab?(tm.city+' '+tm.name):'TBD';
+    var plusDis=seriesOver?' disabled style="opacity:.3;pointer-events:none"':'';
+    return'<div class="team-row '+cl+'"><span class="team-seed">'+(tm.seed||'?')+'</span><img class="team-logo" src="'+logoSrc(tm)+'" onerror="this.onerror=null;this.src=\''+FALLBACK+'\'" alt="'+tm.name+'"><div class="team-name-select"><span style="font-size:.82rem;font-weight:600">'+nm+'</span></div><div class="score-controls"><button class="score-btn" onclick="chg(\''+id+'\',\''+p+'\',-1,'+mW+')">−</button><span class="score-display">'+sc+'</span><button class="score-btn"'+plusDis+' onclick="chg(\''+id+'\',\''+p+'\',1,'+mW+')">+</button></div></div>'}
+  // Game tracker: show boxes 1-7 between teams for best-of-7 series (mW=4)
   var tracker='';
   if(mW===4){
     var games=s.games||[];
-    tracker='<div class="game-tracker"><span style="font-size:.5rem;color:var(--text-secondary);font-weight:600;letter-spacing:1px;margin-right:4px">GAME</span>';
+    tracker='<div class="game-tracker"><span class="game-label">GAME</span>';
     for(var g=1;g<=7;g++){
       var cls='';
-      var arrow='';
+      var arrowTop='<span class="garrow-top">▲</span>';
+      var arrowBot='<span class="garrow-bot">▼</span>';
       if(g<=games.length){
-        if(games[g-1]==='t'){cls=' won-top';arrow='<span class="garrow">▲</span>'}
-        else{cls=' won-bot';arrow='<span class="garrow">▼</span>'}
+        cls=games[g-1]==='t'?' won-top':' won-bot';
       }
-      tracker+='<div class="game-box'+cls+'">'+arrow+'<span class="gnum">'+g+'</span></div>';
+      tracker+='<div class="game-box'+cls+'">'+arrowTop+'<span class="gnum">'+g+'</span>'+arrowBot+'</div>';
     }
     tracker+='</div>';
   }
-  return'<div class="matchup"><div class="matchup-header">'+label+'</div>'+row('t',tT,s.t,s.ts,tW,bW)+row('b',tB,s.b,s.bs,bW,tW)+tracker+'</div>'}
+  return'<div class="matchup"><div class="matchup-header">'+label+'</div>'+row('t',tT,s.t,s.ts,tW,bW)+tracker+row('b',tB,s.b,s.bs,bW,tW)+'</div>'}
 
 function renderPlayIn(){var el=document.getElementById('bracket-playin');var h='<div class="playin-section">';['west','east'].forEach(function(c){var p=PLAYIN_DEF[c],tm=cTeams(c).filter(function(t){return t.seed>=7});var cl=c==='west'?'west-title':'east-title',lb=c==='west'?'🌵 Western Conference':'🗽 Eastern Conference';h+='<div class="playin-conf"><div class="playin-conf-title '+cl+'">'+lb+' Play-In</div><div class="playin-flow"><div class="playin-step-label">7 vs 8 — Winner = #7 Seed (direkt in Playoffs!)</div>'+card(p.g78.id,'7 vs 8',true,true,tm,1)+'<div class="playin-step-label" style="margin-top:12px">9 vs 10 — Loser geht nach Hause</div>'+card(p.g910.id,'9 vs 10',true,true,tm,1)+'<div class="playin-arrow-down">⬇️ Loser von 7v8 vs Winner von 9v10</div>'+card(p.gF.id,'Play-In Final — Winner = #8 Seed',true,true,tm,1)+'</div></div>'});h+='</div>';el.innerHTML=h}
 
@@ -549,23 +693,35 @@ function renderConf(c){
   var tm=cTeams(c),ids=MATCHUP_IDS[c];
   var rN=['First Round','Conf. Semis','Conf. Finals'];
   var rI=[ids.r1,ids.r2,ids.cf];
-  // Build feeder map for rest detection
-  var feedMap={};
-  var cfx=c==='west'?'wcf':'ecf';
-  var s1=c==='west'?'ws1':'es1',s2=c==='west'?'ws2':'es2';
-  feedMap[s1]=[ids.r1[0],ids.r1[1]];
-  feedMap[s2]=[ids.r1[2],ids.r1[3]];
-  feedMap[cfx]=[s1,s2];
+  var cfId=c==='west'?'wcf':'ecf';
+  var confChamp=W(cfId,4);
+  // East bracket is reversed (right to left)
+  var isEast=(c==='east');
+  var roundOrder=isEast?[2,1,0]:[0,1,2];
+
+  // Champion badge HTML
+  var champBadge='';
+  if(confChamp){
+    var champTeam=T(confChamp);
+    champBadge='<div style="min-width:100px;max-width:120px;display:flex;align-items:center;justify-content:center;align-self:center;margin-top:95px">'
+      +'<div style="text-align:center;display:flex;flex-direction:column;align-items:center">'
+      +'<div style="font-family:Bebas Neue,sans-serif;font-size:.8rem;letter-spacing:2px;color:var(--nba-gold);margin-bottom:6px">CONFERENCE<br>CHAMPION</div>'
+      +'<img src="'+champTeam.logo+'" style="width:80px;height:80px;object-fit:contain;filter:drop-shadow(0 0 14px rgba(253,185,39,0.6))" onerror="this.style.display=\'none\'">'
+      +'<div style="font-size:.72rem;font-weight:700;margin-top:6px;color:var(--text-primary)">'+champTeam.city+'<br>'+champTeam.name+'</div>'
+      +'</div></div>';
+  }
 
   var h='<div class="bracket">';
-  for(var ri=0;ri<3;ri++){
+  // For East: badge goes first (left side), for West: badge goes last (right side)
+  if(isEast&&champBadge) h+=champBadge;
+  for(var oi=0;oi<3;oi++){
+    var ri=roundOrder[oi];
     var rc=ri===0?'round-r1':(ri===1?'round-r2':'');
     h+='<div class="round '+rc+'"><div class="round-title">'+rN[ri]+'</div>';
     var ms=rI[ri];
     for(var mi=0;mi<ms.length;mi++){
       var mid=ms[mi];
       var ip=ri===0?'left':'top';
-      // Generate heads HTML: R1=column (left), R2+=row (top)
       var headLayout=ri===0?'col':'row';
       var wI=winnerImg(mid,4,headLayout);
       h+='<div class="matchup-wrap img-'+ip+'">';
@@ -573,8 +729,9 @@ function renderConf(c){
       if(ri===0){
         var d=R1_SEEDS[c][mi],tF=true,bF=d.bot!==null;
         var lb='('+T(state[mid].t).seed+') vs ('+(state[mid].b?T(state[mid].b).seed:'?')+')';
-        if(ip==='left') h+=wI;
+        if(!isEast) h+=wI;
         h+=card(mid,lb,tF,bF,tm,4);
+        if(isEast) h+=wI;
       } else {
         var lb2=rN[ri]+' '+(mi+1);
         if(ri===2) lb2=(c==='west'?'Western':'Eastern')+' Conference Finals';
@@ -584,6 +741,7 @@ function renderConf(c){
     }
     h+='</div>';
   }
+  if(!isEast&&champBadge) h+=champBadge;
   h+='</div>';
   h+=renderStandings(c);
   el.innerHTML=h;
@@ -591,13 +749,69 @@ function renderConf(c){
 
 function renderStandings(c){var d=STANDINGS[c],n=c==='west'?'Western Conference':'Eastern Conference';var h='<div class="standings-section"><div class="standings-title">📊 '+n+' — Final Standings</div><table class="standings-table"><thead><tr><th class="seed-col">#</th><th class="logo-col"></th><th class="team-col">Team</th><th class="record-col">W-L</th></tr></thead><tbody>';d.forEach(function(e){if(e==='---'){h+='<tr class="standings-divider"><td colspan="4">▼ Play-In Tournament ▼</td></tr>';return}var t=TEAMS[e.a],cl=e.s<=6?'playoff-team':'playin-team';h+='<tr class="'+cl+'"><td class="seed-col">'+e.s+'</td><td class="logo-col"><img src="'+t.logo+'" onerror="this.style.display=\'none\'" alt="'+t.abbr+'"></td><td class="team-col">'+t.city+' '+t.name+'</td><td class="record-col">'+t.record+'</td></tr>'});h+='</tbody></table></div>';return h}
 
-function renderFinals(){var el=document.getElementById('bracket-finals');var all=[];for(var k in TEAMS)all.push(TEAMS[k]);all.sort(function(a,b){return a.seed-b.seed});var w=W('fin',4);var h='<div class="finals-container"><div class="finals-matchup"><div class="round-title" style="font-size:1.4rem;margin-bottom:15px">🏆 NBA Finals 2026 🏆</div>'+card('fin','NBA Finals 2026',false,false,all,4)+'</div>';if(w){var ch=T(w);h+='<div class="champion-banner"><div class="trophy">🏆</div><h2>2026 NBA Champion</h2><div class="champion-name">'+ch.city+' '+ch.name+'</div><img src="'+starUrl(w)+'" style="width:120px;border-radius:50%;margin-top:15px;border:3px solid var(--nba-gold);box-shadow:0 0 30px rgba(253,185,39,0.5);filter:contrast(1.3) saturate(1.2)" onerror="this.style.display=\'none\'"></div>'}h+='</div>';el.innerHTML=h}
+function renderFinals(){
+  var el=document.getElementById('bracket-finals');
+  var all=[];for(var k in TEAMS)all.push(TEAMS[k]);all.sort(function(a,b){return a.seed-b.seed});
+  var s=state['fin'],w=W('fin',4);
+  var tUrl=s.t?starUrl(s.t):'',bUrl=s.b?starUrl(s.b):'';
+  var leftHead='<div class="heads-wrap">';
+  if(tUrl){var tCls=w&&w===s.t?'head-fire':(w&&w!==s.t?'head-loser':'head-neutral');leftHead+='<img class="winner-img '+tCls+'" src="'+tUrl+'" alt="'+s.t+'" onerror="this.style.visibility=\'hidden\'">';}
+  leftHead+='</div>';
+  var rightHead='<div class="heads-wrap">';
+  if(bUrl){var bCls=w&&w===s.b?'head-fire':(w&&w!==s.b?'head-loser':'head-neutral');rightHead+='<img class="winner-img '+bCls+'" src="'+bUrl+'" alt="'+s.b+'" onerror="this.style.visibility=\'hidden\'">';}
+  rightHead+='</div>';
+  var h='<div class="finals-container"><div class="round-title" style="font-size:1.4rem;margin-bottom:15px">🏆 NBA Finals 2026 🏆</div>'
+    +'<div class="matchup-wrap img-sides">'+leftHead+card('fin','NBA Finals 2026',false,false,all,4)+rightHead+'</div>';
+  if(w){
+    var ch=T(w);
+    // Celebration heads: all roster players of the winning team
+    var celebIds=ROSTERS[w]||[ch.star,ch.star2];
+    var celebHtml='<div style="display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin-top:20px;max-width:400px">';
+    celebIds.forEach(function(pid,i){
+      if(!pid)return;
+      var url='https://cdn.nba.com/headshots/nba/latest/1040x760/'+pid+'.png';
+      celebHtml+='<img class="winner-img head-fire" src="'+url+'" style="width:48px;height:48px;animation-delay:'+(i*0.15).toFixed(2)+'s" onerror="this.style.display=\'none\'">';
+    });
+    celebHtml+='</div>';
+    h+='<div class="champion-banner"><div class="trophy">🏆</div><h2>2026 NBA Champion</h2>'
+      +'<div class="champion-name">'+ch.city+' '+ch.name+'</div>'
+      +'<img src="'+ch.logo+'" style="width:80px;margin-top:15px;filter:drop-shadow(0 0 20px rgba(253,185,39,0.5))" onerror="this.style.display=\'none\'">'
+      +celebHtml+'</div>';
+  }
+  h+='</div>';el.innerHTML=h;
+}
 
 // === STARS ===
 function aliveTeams(cf){var d={};var ids=MATCHUP_IDS[cf];ids.r1.concat(ids.r2).concat(ids.cf).forEach(function(id){var lo=L(id,4);if(lo)d[lo]=true});var p=PLAYIN_DEF[cf];var l9=L(p.g910.id,1);if(l9)d[l9]=true;var lF=L(p.gF.id,1);if(lF)d[lF]=true;return cTeams(cf).filter(function(t){return!d[t.abbr]})}
 function alivePlayinTeams(cf){var d={};var p=PLAYIN_DEF[cf];var l9=L(p.g910.id,1);if(l9)d[l9]=true;var lF=L(p.gF.id,1);if(lF)d[lF]=true;return cTeams(cf).filter(function(t){return t.seed>=7&&!d[t.abbr]})}
-function pickStars(tab){var pool=[];if(tab==='playin'){pool=alivePlayinTeams('west').concat(alivePlayinTeams('east'))}else if(tab==='west'||tab==='east'){pool=aliveTeams(tab).filter(function(t){return t.seed<=8})}else if(tab==='finals'){var w=aliveTeams('west'),e=aliveTeams('east');if(w.length)pool.push(w[0]);if(e.length)pool.push(e[0])}pool.sort(function(a,b){return a.seed-b.seed});var seen={},r=[];pool.forEach(function(t){if(!seen[t.abbr]){seen[t.abbr]=true;r.push(t.abbr)}});return r.slice(0,2)}
-function updateStars(){var stars=pickStars(currentTab);var key=stars.join(',');if(key===lastStarKey)return;lastStarKey=key;var c=document.getElementById('star-container'),h='';if(stars.length>=1)h+='<img class="star-player left-star active" src="'+starUrl(stars[0])+'" alt="'+stars[0]+'" onerror="this.style.display=\'none\'">';if(stars.length>=2)h+='<img class="star-player right-star active" src="'+starUrl(stars[1])+'" alt="'+stars[1]+'" onerror="this.style.display=\'none\'">';c.innerHTML=h}
+function pickStars(tab){
+  var pool=[];
+  if(tab==='playin'){pool=alivePlayinTeams('west').concat(alivePlayinTeams('east'))}
+  else if(tab==='west'||tab==='east'){pool=aliveTeams(tab).filter(function(t){return t.seed<=8})}
+  else if(tab==='finals'){var w=aliveTeams('west'),e=aliveTeams('east');if(w.length)pool.push(w[0]);if(e.length)pool.push(e[0])}
+  pool.sort(function(a,b){return a.seed-b.seed});
+  var seen={},r=[];pool.forEach(function(t){if(!seen[t.abbr]){seen[t.abbr]=true;r.push(t.abbr)}});
+  var picks=r.slice(0,2);
+  // If only 1 team left (conf finals winner or champion), show star + star2
+  if(picks.length===1){return[{abbr:picks[0],use:'star'},{abbr:picks[0],use:'star2'}]}
+  if(picks.length>=2){return[{abbr:picks[0],use:'star'},{abbr:picks[1],use:'star'}]}
+  return[];
+}
+function updateStars(){
+  var stars=pickStars(currentTab);
+  var key=stars.map(function(s){return s.abbr+s.use}).join(',');
+  if(key===lastStarKey)return;lastStarKey=key;
+  var c=document.getElementById('star-container'),h='';
+  if(stars.length>=1){
+    var url1=stars[0].use==='star2'?star2Url(stars[0].abbr):starUrl(stars[0].abbr);
+    if(url1)h+='<img class="star-player left-star active" src="'+url1+'" alt="'+stars[0].abbr+'" onerror="this.style.display=\'none\'">';
+  }
+  if(stars.length>=2){
+    var url2=stars[1].use==='star2'?star2Url(stars[1].abbr):starUrl(stars[1].abbr);
+    if(url2)h+='<img class="star-player right-star active" src="'+url2+'" alt="'+stars[1].abbr+'" onerror="this.style.display=\'none\'">';
+  }
+  c.innerHTML=h;
+}
 // === SOUNDS ===
 var audioCtx=null;function getAudio(){if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();return audioCtx}
 function playTone(f,d,t,v){try{var c=getAudio(),o=c.createOscillator(),g=c.createGain();o.type=t||'sine';o.frequency.value=f;g.gain.value=v||0.15;o.connect(g);g.connect(c.destination);o.start();g.gain.exponentialRampToValueAtTime(0.001,c.currentTime+d);o.stop(c.currentTime+d)}catch(e){}}
