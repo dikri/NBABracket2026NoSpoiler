@@ -17,6 +17,8 @@ A single-page PWA that lets you manually track every series from the Play-In Tou
   - Fire glow animation for the series winner
   - Red/greyed out for the eliminated team
   - 💤 rest badge when waiting for next opponent
+  - 🧹 **SWEPT** stamp + intense flames on 4-0 wins
+  - 🐺 **UPSET** stamp + purple glow when underdog wins (seed diff ≥ 3)
 - **Conference Champion Badge**: Team logo + title appears when a conference winner is decided
 - **Finals Celebration**: All 5 starters of the champion team appear with fire glow
 - **Mirrored Brackets**: West flows left→right, East flows right→left (like a real TV bracket)
