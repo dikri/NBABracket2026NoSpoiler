@@ -10,7 +10,9 @@ A single-page PWA that lets you manually track every series from the Play-In Tou
 
 - **Full Bracket**: Play-In → First Round → Conf. Semis → Conf. Finals → Finals
 - **Auto-Advance**: Winners automatically move to the next round
-- **Game Tracker**: `GAME 1-7` boxes between teams — ▲ green arrow for top team wins, ▼ gold arrow for bottom team wins
+- **Game Tracker**: `GAME 1-7` boxes between teams — ▲ green arrow for top team wins, ▼ gold arrow for bottom team wins. Hover/long-press to tag games:
+  - 💨 Blowout (≥20pt) · 💀 Demolition (≥30pt) · ⚡ Nail-biter (≤5pt) · ⏱️ OT · ⏱️⏱️ 2OT
+  - Enter score → auto-tagged, or pick manually
 - **Date Tracker**: "Watched through" date + countdown showing days behind live
 - **🔥 Dynamic Player Heads**: Star headshots next to each matchup
   - Both team stars shown once a matchup is set
