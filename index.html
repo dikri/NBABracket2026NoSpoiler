@@ -643,8 +643,8 @@ MIA:['1628389','1629639','1626181','1631107','1642267']
 var FALLBACK='data:image/svg+xml,'+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40"><circle cx="20" cy="20" r="18" fill="#333"/><text x="20" y="26" text-anchor="middle" fill="#888" font-size="14">🏀</text></svg>');
 var STANDINGS={west:[{a:'OKC',s:1},{a:'SAS',s:2},{a:'DEN',s:3},{a:'LAL',s:4},{a:'HOU',s:5},{a:'MIN',s:6},'---',{a:'POR',s:7},{a:'PHX',s:8},{a:'LAC',s:9},{a:'GSW',s:10}],east:[{a:'DET',s:1},{a:'BOS',s:2},{a:'NYK',s:3},{a:'CLE',s:4},{a:'TOR',s:5},{a:'ATL',s:6},'---',{a:'PHI',s:7},{a:'ORL',s:8},{a:'CHA',s:9},{a:'MIA',s:10}]};
 var PLAYIN_DEF={west:{g78:{id:'pi_w78',t:'POR',b:'PHX'},g910:{id:'pi_w910',t:'LAC',b:'GSW'},gF:{id:'pi_wF'}},east:{g78:{id:'pi_e78',t:'PHI',b:'ORL'},g910:{id:'pi_e910',t:'CHA',b:'MIA'},gF:{id:'pi_eF'}}};
-var MATCHUP_IDS={west:{r1:['w1','w2','w3','w4'],r2:['ws1','ws2'],cf:['wcf']},east:{r1:['e1','e2','e3','e4'],r2:['es1','es2'],cf:['ecf']},finals:['fin']};
-var R1_SEEDS={west:[{id:'w1',top:'OKC',bot:null},{id:'w2',top:'SAS',bot:null},{id:'w3',top:'DEN',bot:'MIN'},{id:'w4',top:'LAL',bot:'HOU'}],east:[{id:'e1',top:'DET',bot:null},{id:'e2',top:'BOS',bot:null},{id:'e3',top:'NYK',bot:'ATL'},{id:'e4',top:'CLE',bot:'TOR'}]};
+var MATCHUP_IDS={west:{r1:['w1','w4','w2','w3'],r2:['ws1','ws2'],cf:['wcf']},east:{r1:['e1','e4','e2','e3'],r2:['es1','es2'],cf:['ecf']},finals:['fin']};
+var R1_SEEDS={west:[{id:'w1',top:'OKC',bot:null},{id:'w4',top:'LAL',bot:'HOU'},{id:'w2',top:'SAS',bot:null},{id:'w3',top:'DEN',bot:'MIN'}],east:[{id:'e1',top:'DET',bot:null},{id:'e4',top:'CLE',bot:'TOR'},{id:'e2',top:'BOS',bot:null},{id:'e3',top:'NYK',bot:'ATL'}]};
 var FEED={ws1:['w1','w4'],ws2:['w2','w3'],es1:['e1','e4'],es2:['e2','e3'],wcf:['ws1','ws2'],ecf:['es1','es2'],fin:['wcf','ecf']};
 var state={},SAVE_KEY='nba2026v5',currentTab='playin',lastStarKey='';
 // Date tracker state (separate from bracket state for compatibility)
