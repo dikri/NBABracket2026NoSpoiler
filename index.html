@@ -104,8 +104,10 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 .bracket{display:flex;align-items:center;justify-content:center;gap:24px;min-width:fit-content;padding:10px}
 .round{display:flex;flex-direction:column;justify-content:center;min-width:240px}
 .round-title{font-family:'Bebas Neue',sans-serif;font-size:1rem;letter-spacing:2px;color:var(--text-secondary);text-align:center;margin-bottom:8px}
-.round-r1 .matchup-wrap{margin-bottom:12px}.round-r1 .matchup-wrap:last-child{margin-bottom:0}
-.round-r2 .matchup-wrap{margin-bottom:40px}.round-r2 .matchup-wrap:last-child{margin-bottom:0}
+.round-r1 .matchup-wrap{margin-bottom:12px}
+.round-r1 .matchup-wrap:last-child{margin-bottom:0}
+.round-r2 .matchup-wrap{margin-bottom:40px}
+.round-r2 .matchup-wrap:last-child{margin-bottom:0}
 .matchup{background:var(--bg-card);border:1px solid var(--border-color);border-radius:12px;overflow:hidden;transition:all .3s;box-shadow:0 4px 15px rgba(0,0,0,0.3);width:320px;min-width:320px;max-width:320px}
 .matchup:hover{border-color:var(--nba-gold);box-shadow:0 4px 20px var(--accent-glow);transform:translateY(-2px)}
 .matchup-header{font-size:.6rem;color:var(--text-secondary);text-align:center;padding:5px 8px 3px;text-transform:uppercase;letter-spacing:1px;border-bottom:1px solid var(--border-color);background:rgba(255,255,255,0.02)}
@@ -668,9 +670,9 @@ function renderDate(){
 
 // Days until live
 function renderDaysLeft(){
-  var now=new Date();
-  var watchDate=new Date(2026,3+dateState.m,dateState.d); // month 3=April(0-idx in JS Date: 3=Apr)
-  var diff=Math.ceil((now-watchDate)/(1000*60*60*24));
+  var now=new Date();now.setHours(0,0,0,0);
+  var watchDate=new Date(2026,3+dateState.m,dateState.d);
+  var diff=Math.round((now-watchDate)/(1000*60*60*24));
   var el=document.getElementById('days-left');
   if(diff<=0){el.innerHTML='🟢 <span>'+tx('live','Live!')+'</span>'}
   else if(diff===1){el.innerHTML='→ <span>1</span> '+tx('dayLeft','day behind live')}
@@ -774,11 +776,20 @@ function card(id,label,tF,bF,tL,mW,scoreLeft){var s=state[id];if(!s)return'';var
       var arrowTop='',arrowBot='',badge='';
       if(played){
         var who=(typeof game==='string')?game:game.who;
-        var tag=(typeof game==='object')?game.tag:'';
+        var tag=(typeof game==='object')?(game.tag||''):'';
+        var tag2=(typeof game==='object')?(game.tag2||''):'';
         cls+=who==='t'?' won-top':' won-bot';
         arrowTop=who==='t'?'visible':'';
         arrowBot=who==='b'?'visible':'';
-        if(tag){var badgePos=who==='t'?'pos-bot':'pos-top';badge='<span class="tag-badge '+tag+' '+badgePos+' visible">'+tagEm(tag)+'</span>'}
+        if(tag||tag2){
+          var badgePos=who==='t'?'pos-bot':'pos-top';
+          var primaryTag=tag||tag2;
+          badge='<span class="tag-badge '+primaryTag+' '+badgePos+' visible">'+tagEm(primaryTag)+'</span>';
+          if(tag&&tag2){
+            var otPos=who==='t'?'pos-top':'pos-bot';
+            badge+='<span class="tag-badge '+tag2+' '+otPos+' visible" style="right:auto;left:-8px">'+tagEm(tag2)+'</span>';
+          }
+        }
       }
       var ev=played?' onclick="openTagPopup(\''+id+'\','+(g-1)+')" onmouseenter="hoverGameBox(\''+id+'\','+(g-1)+')" onmouseleave="clearTimeout(tagHoverTimer)" ontouchstart="touchGameStart(\''+id+'\','+(g-1)+')" ontouchend="touchGameEnd()"':'';
       tracker+='<div class="game-col"><span class="game-arrow top-arrow '+arrowTop+'">▲</span><div class="'+cls+'"'+ev+'>'+g+badge+'</div><span class="game-arrow bot-arrow '+arrowBot+'">▼</span></div>';
@@ -1007,7 +1018,7 @@ function openTagPopup(id,idx){
   document.getElementById('tp-title').textContent='GAME '+(idx+1)+' — '+who+' WIN';
   document.getElementById('tp-score-a').value=game.scoreA||'';
   document.getElementById('tp-score-b').value=game.scoreB||'';
-  document.querySelectorAll('.tp-tag').forEach(function(el){el.classList.toggle('selected',el.dataset.tag===game.tag)});
+  document.querySelectorAll('.tp-tag').forEach(function(el){el.classList.toggle('selected',el.dataset.tag===game.tag||el.dataset.tag===(game.tag2||''))});
   updateTagResult();
   document.getElementById('tag-popup-overlay').classList.add('active');
 }
@@ -1017,9 +1028,16 @@ function closeTagPopup(e){
   tagPopupId='';tagPopupIdx=-1;
 }
 function toggleGameTag(tag){
+  // Two groups: result (blow/demo/nail) and overtime (ot/two-ot)
+  var otGroup=['ot','two-ot'];
+  var resultGroup=['blow','demo','nail'];
+  var isOt=otGroup.indexOf(tag)>=0;
+  var group=isOt?otGroup:resultGroup;
   document.querySelectorAll('.tp-tag').forEach(function(el){
-    if(el.dataset.tag===tag)el.classList.toggle('selected');
-    else el.classList.remove('selected');
+    if(group.indexOf(el.dataset.tag)>=0){
+      if(el.dataset.tag===tag)el.classList.toggle('selected');
+      else el.classList.remove('selected');
+    }
   });
   updateTagResult();
 }
@@ -1027,7 +1045,8 @@ function autoTagScore(){
   var a=parseInt(document.getElementById('tp-score-a').value)||0;
   var b=parseInt(document.getElementById('tp-score-b').value)||0;
   var diff=Math.abs(a-b);
-  document.querySelectorAll('.tp-tag').forEach(function(el){el.classList.remove('selected')});
+  // Only auto-set result group, leave OT untouched
+  document.querySelectorAll('.tp-tag[data-tag="blow"],.tp-tag[data-tag="demo"],.tp-tag[data-tag="nail"]').forEach(function(el){el.classList.remove('selected')});
   if(diff>=30)document.querySelector('.tp-tag[data-tag="demo"]').classList.add('selected');
   else if(diff>=20)document.querySelector('.tp-tag[data-tag="blow"]').classList.add('selected');
   else if(diff<=5&&a>0)document.querySelector('.tp-tag[data-tag="nail"]').classList.add('selected');
@@ -1046,8 +1065,11 @@ function saveTagPopup(){
   if(!game)return;
   game.scoreA=parseInt(document.getElementById('tp-score-a').value)||0;
   game.scoreB=parseInt(document.getElementById('tp-score-b').value)||0;
-  var sel=document.querySelector('.tp-tag.selected');
-  game.tag=sel?sel.dataset.tag:'';
+  // Collect selected tags from both groups
+  var selResult=document.querySelector('.tp-tag[data-tag="blow"].selected,.tp-tag[data-tag="demo"].selected,.tp-tag[data-tag="nail"].selected');
+  var selOt=document.querySelector('.tp-tag[data-tag="ot"].selected,.tp-tag[data-tag="two-ot"].selected');
+  game.tag=selResult?selResult.dataset.tag:'';
+  game.tag2=selOt?selOt.dataset.tag:'';
   document.getElementById('tag-popup-overlay').classList.remove('active');
   tagPopupId='';tagPopupIdx=-1;
   renderAll();
