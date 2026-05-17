@@ -57,14 +57,43 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 }
 /* Swept stamp on loser */
 .head-swept-wrap{position:relative;display:inline-block}
-.head-swept-wrap .swept-stamp{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%) rotate(-20deg);font-family:'Bebas Neue',sans-serif;font-size:.7rem;letter-spacing:2px;color:#ff3300;background:rgba(0,0,0,0.7);border:2px solid #ff3300;border-radius:4px;padding:2px 6px;white-space:nowrap;pointer-events:none}
+.head-swept-wrap .swept-stamp{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%) rotate(-25deg);font-family:'Bebas Neue',sans-serif;font-size:.7rem;letter-spacing:2px;color:#ff3300;background:rgba(0,0,0,0.7);border:2px solid #ff3300;border-radius:4px;padding:2px 6px;white-space:nowrap;pointer-events:none;opacity:1}
 /* Underdog winner */
 .winner-img.head-underdog{border-color:#7c4dff;animation:underdogGlow 1s ease infinite alternate;filter:contrast(1.3) saturate(1.2)}
 @keyframes underdogGlow{
   0%{box-shadow:0 0 8px rgba(124,77,255,0.5),0 0 16px rgba(124,77,255,0.2)}
   100%{box-shadow:0 0 14px rgba(124,77,255,0.7),0 0 28px rgba(124,77,255,0.3)}
 }
-.head-swept-wrap .underdog-stamp{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%) rotate(-15deg);font-family:'Bebas Neue',sans-serif;font-size:.7rem;letter-spacing:2px;color:#7c4dff;background:rgba(0,0,0,0.7);border:2px solid #7c4dff;border-radius:4px;padding:2px 6px;white-space:nowrap;pointer-events:none}
+.head-swept-wrap .underdog-stamp{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%) rotate(20deg);font-family:'Bebas Neue',sans-serif;font-size:.7rem;letter-spacing:2px;color:#7c4dff;background:rgba(0,0,0,0.7);border:2px solid #7c4dff;border-radius:4px;padding:2px 6px;white-space:nowrap;pointer-events:none;opacity:1}
+/* Combo: Underdog Sweep — cross pattern */
+.head-swept-wrap .swept-stamp.cross{transform:translate(-50%,-50%) rotate(-25deg)}
+.head-swept-wrap .underdog-stamp.cross{transform:translate(-50%,-50%) rotate(25deg)}
+/* When animating combo, second stamp starts hidden */
+.head-swept-wrap .underdog-stamp.cross.stamp-anim-delay{opacity:0}
+/* Stamp slam animation — only applied via JS class */
+.stamp-anim{animation:stampSlam .6s cubic-bezier(0.2,1,0.3,1) forwards}
+.stamp-anim-delay{animation:stampSlam .6s cubic-bezier(0.2,1,0.3,1) .8s forwards;opacity:0}
+@keyframes stampSlam{
+  0%{opacity:0;transform:translate(-50%,-50%) rotate(var(--rot,0deg)) scale(2.5)}
+  70%{opacity:1;transform:translate(-50%,-50%) rotate(var(--rot,0deg)) scale(0.85)}
+  100%{opacity:1;transform:translate(-50%,-50%) rotate(var(--rot,0deg)) scale(1)}
+}
+/* Head squish when stamped */
+.head-squish{animation:squish .5s ease}
+.head-squish-delay{animation:squish .5s ease .8s}
+@keyframes squish{
+  0%{transform:scale(1)}
+  50%{transform:scale(0.8)}
+  100%{transform:scale(1)}
+}
+/* Dust particles */
+.dust-wrap{position:absolute;inset:0;pointer-events:none;overflow:visible}
+.dust{position:absolute;width:4px;height:4px;border-radius:50%;background:rgba(255,200,100,0.9);animation:dustFly 1.2s ease-out forwards}
+.dust-delay{animation-delay:.8s}
+@keyframes dustFly{
+  0%{opacity:1;transform:translate(0,0) scale(1)}
+  100%{opacity:0;transform:translate(var(--dx),var(--dy)) scale(0)}
+}
 @keyframes fireGlow{
   0%{box-shadow:0 0 8px rgba(255,109,0,0.5),0 0 16px rgba(255,60,0,0.2)}
   50%{box-shadow:0 0 14px rgba(255,109,0,0.7),0 0 28px rgba(255,60,0,0.3),0 0 4px rgba(255,200,0,0.4)}
@@ -714,6 +743,16 @@ function logoSrc(t){return t.logo||FALLBACK}
 function starUrl(a){var t=TEAMS[a];return(t&&t.star)?'https://cdn.nba.com/headshots/nba/latest/1040x760/'+t.star+'.png':''}
 function star2Url(a){var t=TEAMS[a];return(t&&t.star2)?'https://cdn.nba.com/headshots/nba/latest/1040x760/'+t.star2+'.png':''}
 function winnerImg(id,mW,layout){
+  function dustHtml(delayed){
+    var d='<div class="dust-wrap">';
+    for(var i=0;i<12;i++){
+      var angle=(i*30+Math.random()*15)*(Math.PI/180);
+      var dist=18+Math.random()*18;
+      var dx=Math.cos(angle)*dist,dy=Math.sin(angle)*dist;
+      d+='<div class="dust'+(delayed?' dust-delay':'')+'" style="top:50%;left:50%;--dx:'+dx.toFixed(0)+'px;--dy:'+dy.toFixed(0)+'px;animation-delay:'+((delayed?0.4:0)+i*0.03).toFixed(2)+'s"></div>';
+    }
+    return d+'</div>';
+  }
   var s=state[id];if(!s)return'<div class="winner-img-slot"></div>';
   var tAbbr=s.t,bAbbr=s.b,w=W(id,mW);
   var tUrl=tAbbr?starUrl(tAbbr):'',bUrl=bAbbr?starUrl(bAbbr):'';
@@ -735,10 +774,13 @@ function winnerImg(id,mW,layout){
     else if(w&&w!==tAbbr)tCls='head-loser';
     var tSwept=(w&&w!==tAbbr&&isSweep);
     var tUpset=(w&&w!==tAbbr&&isUnderdog&&!isSweep);
-    if(tSwept||tUpset)h+='<div class="head-swept-wrap">';
-    h+='<img class="winner-img '+tCls+'" src="'+tUrl+'" alt="'+tAbbr+'" onerror="this.style.visibility=\'hidden\'">';
-    if(tSwept)h+='<span class="swept-stamp">🧹 SWEPT</span></div>';
-    else if(tUpset)h+='<span class="underdog-stamp">🐺 UPSET</span></div>';
+    var tCombo=(w&&w!==tAbbr&&isSweep&&isUnderdog);
+    var anim=(justWonId===id);
+    if(tSwept||tUpset||tCombo)h+='<div class="head-swept-wrap">';
+    h+='<img class="winner-img '+tCls+(anim&&(tSwept||tCombo)?' head-squish':'')+'" src="'+tUrl+'" alt="'+tAbbr+'" onerror="this.style.visibility=\'hidden\'">';
+    if(tCombo)h+='<span class="swept-stamp cross'+(anim?' stamp-anim':'')+'" style="--rot:-25deg">🧹 SWEPT</span><span class="underdog-stamp cross'+(anim?' stamp-anim-delay':'')+'" style="--rot:25deg">🐺 UPSET</span>'+dustHtml(false)+(anim?dustHtml(true):'')+'</div>';
+    else if(tSwept)h+='<span class="swept-stamp'+(anim?' stamp-anim':'')+'" style="--rot:-25deg">🧹 SWEPT</span>'+(anim?dustHtml(false):'')+'</div>';
+    else if(tUpset)h+='<span class="underdog-stamp'+(anim?' stamp-anim':'')+'" style="--rot:20deg">🐺 UPSET</span></div>';
     if(oneWaiting&&tAbbr&&!bAbbr)h+='<div class="head-badge resting">💤</div>';
   }
   if(bUrl){
@@ -747,10 +789,12 @@ function winnerImg(id,mW,layout){
     else if(w&&w!==bAbbr)bCls='head-loser';
     var bSwept=(w&&w!==bAbbr&&isSweep);
     var bUpset=(w&&w!==bAbbr&&isUnderdog&&!isSweep);
-    if(bSwept||bUpset)h+='<div class="head-swept-wrap">';
-    h+='<img class="winner-img '+bCls+'" src="'+bUrl+'" alt="'+bAbbr+'" onerror="this.style.visibility=\'hidden\'">';
-    if(bSwept)h+='<span class="swept-stamp">🧹 SWEPT</span></div>';
-    else if(bUpset)h+='<span class="underdog-stamp">🐺 UPSET</span></div>';
+    var bCombo=(w&&w!==bAbbr&&isSweep&&isUnderdog);
+    if(bSwept||bUpset||bCombo)h+='<div class="head-swept-wrap">';
+    h+='<img class="winner-img '+bCls+(anim&&(bSwept||bCombo)?' head-squish':'')+'" src="'+bUrl+'" alt="'+bAbbr+'" onerror="this.style.visibility=\'hidden\'">';
+    if(bCombo)h+='<span class="swept-stamp cross'+(anim?' stamp-anim':'')+'" style="--rot:-25deg">🧹 SWEPT</span><span class="underdog-stamp cross'+(anim?' stamp-anim-delay':'')+'" style="--rot:25deg">🐺 UPSET</span>'+dustHtml(false)+(anim?dustHtml(true):'')+'</div>';
+    else if(bSwept)h+='<span class="swept-stamp'+(anim?' stamp-anim':'')+'" style="--rot:-25deg">🧹 SWEPT</span>'+(anim?dustHtml(false):'')+'</div>';
+    else if(bUpset)h+='<span class="underdog-stamp'+(anim?' stamp-anim':'')+'" style="--rot:20deg">🐺 UPSET</span></div>';
     if(oneWaiting&&bAbbr&&!tAbbr)h+='<div class="head-badge resting">💤</div>';
   }
   h+='</div>';
@@ -978,13 +1022,20 @@ function chg(id,pos,delta,mW){var s=state[id],key=pos==='t'?'ts':'bs',other=pos=
   else if(delta<0&&s.games.length>0){
     for(var i=s.games.length-1;i>=0;i--){if((typeof s.games[i]==='object'?s.games[i].who:s.games[i])===pos){s.games.splice(i,1);break}}
   }
-  var now=W(id,mW);renderAll();if(delta>0){if(!had&&now){
-    // Check for sweep (4-0)
+  var now=W(id,mW);
+  // Set justWonId for stamp animation (only on fresh win)
+  justWonId=(!had&&now)?id:'';
+  renderAll();
+  // Clear after render so re-renders don't re-animate
+  setTimeout(function(){justWonId=''},2500);
+  if(delta>0){if(!had&&now){
     var isSweep=mW===4&&((s.ts===4&&s.bs===0)||(s.bs===4&&s.ts===0));
-    // Check for underdog (7/8 seed beats 1/2 seed)
     var isUnderdog=false;
     if(mW===4){var wSeed=T(now).seed,lAbbr=(now===s.t)?s.b:s.t,lSeed=T(lAbbr).seed;if(typeof wSeed==='number'&&typeof lSeed==='number'&&(wSeed-lSeed)>=3)isUnderdog=true}
-    if(id==='fin')soundChampion();else if(isSweep)soundSweep();else if(isUnderdog)soundUnderdog();else randomWinSound()
+    if(id==='fin')soundChampion();
+    else if(isSweep){soundSweep();setTimeout(function(){playTone(200,0.1,'triangle',0.15)},1000);if(isUnderdog)setTimeout(function(){playTone(180,0.1,'triangle',0.15)},1800)}
+    else if(isUnderdog){soundUnderdog();setTimeout(function(){playTone(200,0.1,'triangle',0.15)},1500)}
+    else randomWinSound()
   }else randomScoreSound()}else if(delta<0)randomMissSound()}
 function setTeam(id,pos,abbr){var s=state[id];if(pos==='t')s.t=abbr;else s.b=abbr;renderAll()}
 function showTab(tab){currentTab=tab;document.querySelectorAll('.bracket-container').forEach(function(el){el.classList.remove('active')});document.querySelectorAll('.tab-btn').forEach(function(el){el.className='tab-btn'});document.querySelectorAll('.conf-bg').forEach(function(el){el.classList.remove('active')});document.getElementById('bracket-'+tab).classList.add('active');document.getElementById('tab-'+tab).classList.add('active-'+tab);document.getElementById('bg-'+tab).classList.add('active');lastStarKey='';updateStars()}
@@ -1013,6 +1064,7 @@ function showStatus(msg){var el=document.getElementById('status-msg');el.textCon
 // === GAME TAG POPUP ===
 function tagEm(t){return{blow:'💨',demo:'💀',nail:'⚡',ot:'⏱️','two-ot':'⏱⏱'}[t]||''}
 var tagPopupId='',tagPopupIdx=-1,tagHoverTimer=null;
+var justWonId=''; // tracks which matchup just won for stamp animation
 function hoverGameBox(id,idx){clearTimeout(tagHoverTimer);tagHoverTimer=setTimeout(function(){openTagPopup(id,idx)},1000)}
 function touchGameStart(id,idx){tagHoverTimer=setTimeout(function(){openTagPopup(id,idx)},800)}
 function touchGameEnd(){clearTimeout(tagHoverTimer)}
