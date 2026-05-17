@@ -756,7 +756,15 @@ function winnerImg(id,mW,layout){
   h+='</div>';
   return h;
 }
-function propagate(){['west','east'].forEach(function(c){var p=PLAYIN_DEF[c];state[p.gF.id].t=L(p.g78.id,1)||'';state[p.gF.id].b=W(p.g910.id,1)||'';var r1=R1_SEEDS[c];state[r1[0].id].b=W(p.gF.id,1)||'';state[r1[1].id].b=W(p.g78.id,1)||''});for(var tgt in FEED){var src=FEED[tgt];state[tgt].t=W(src[0],4)||'';state[tgt].b=W(src[1],4)||''}}
+function propagate(){['west','east'].forEach(function(c){var p=PLAYIN_DEF[c];state[p.gF.id].t=L(p.g78.id,1)||'';state[p.gF.id].b=W(p.g910.id,1)||'';
+  // 8-seed (winner of final play-in) goes to 1v8 matchup
+  var m1v8=c==='west'?'w1':'e1';
+  // 7-seed (winner of 7v8 play-in) goes to 2v7 matchup
+  var m2v7=c==='west'?'w2':'e2';
+  state[m1v8].b=W(p.gF.id,1)||'';
+  state[m2v7].b=W(p.g78.id,1)||''});
+  for(var tgt in FEED){var src=FEED[tgt];state[tgt].t=W(src[0],4)||'';state[tgt].b=W(src[1],4)||''}
+}
 
 function card(id,label,tF,bF,tL,mW,scoreLeft){var s=state[id];if(!s)return'';var tT=T(s.t),tB=T(s.b),w=W(id,mW),tW=(w&&w===s.t),bW=(w&&w===s.b);
   var seriesOver=!!w;
